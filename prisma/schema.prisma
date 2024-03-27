@@ -1,0 +1,59 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  privyId                       String            @id
+  email                         String?
+  createdAt                     DateTime          @default(now())
+  lastLogin                     DateTime?
+  streak                        Int               @default(0)
+  longestStreak                 Int?              @default(0)
+  writingSessions               WritingSession[]
+  newenBalance                   Int               @default(0)
+  totalNewenEarned               Int               @default(0)
+  Newen                          Newen[]
+  NewenTransaction               NewenTransaction[]
+  lastNotified                  DateTime?
+}
+
+model Emails {
+  id            Int @id @default(autoincrement())
+  email         String?
+}
+
+model Newen {
+  id       Int      @id @default(autoincrement())
+  user     User     @relation(fields: [userId], references: [privyId])
+  userId   String
+  amount   Int
+  earnedAt DateTime @default(now())
+}
+
+model NewenTransaction {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [privyId])
+  userId    String
+  amount    Int
+  type      String // "earned" or "spent"
+  createdAt DateTime @default(now())
+  cid       String?
+}
+
+model WritingSession {
+  id                  String   @id @default(uuid())
+  user                User     @relation(fields: [userId], references: [privyId])
+  userId              String
+  startTime           DateTime
+  endTime             DateTime?
+  newenEarned         Int?
+  writingCID          String?
+  status              String?
+  randomUUID          String?
+  flag                Boolean @default(false)
+}
