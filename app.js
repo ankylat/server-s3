@@ -72,6 +72,26 @@ app.get("/", checkIfValidUser, (req, res) => {
   res.send("hello world");
 });
 
+app.post("/user/:privyId", checkIfValidUser, async (req, res) => {
+  try {
+    let user;
+    const privyId = req.params.privyId;
+    user = await prisma.user.findUnique({
+      where: { privyId },
+    });
+    if (!user) {
+      user = await prisma.user.create({
+        data: {
+          privyId: privyId,
+        },
+      });
+    }
+    res.json({ user });
+  } catch (error) {
+    console.log("there was an error", error);
+  }
+});
+
 app.post("/check-user", checkIfValidUser, async (req, res) => {
   try {
     const { privyId } = req.body;
@@ -115,14 +135,13 @@ app.post("/start-session", checkIfValidUser, async (req, res) => {
     console.log("starting the session", req.body);
     const userPrivyId = req.body.userPrivyId;
     const now = req.body.timestamp;
+    const randomUUID = req.body.randomUUID;
     // Validate the userPrivyId format and check for an existing active session
-    if (!isValidPrivyId(userPrivyId) || (await hasActiveSession(userPrivyId))) {
-      return res
-        .status(400)
-        .send("Invalid request or active session already exists.");
+    if (!isValidPrivyId(userPrivyId)) {
+      console.log("aloja");
+      return res.status(400).send("Invalid request.");
     }
 
-    const randomUUID = "123";
     const newSession = await prisma.writingSession.create({
       data: {
         userId: userPrivyId,
@@ -225,6 +244,7 @@ async function updateStreak(privyId) {
 
 app.post("/end-session", checkIfValidUser, async (req, res) => {
   try {
+    console.log("inside the end session route", req.body);
     const finishTimestamp = req.body.timestamp;
     const userPrivyId = req.body.user;
     const frontendWrittenTime = req.body.frontendWrittenTime;
@@ -235,14 +255,21 @@ app.post("/end-session", checkIfValidUser, async (req, res) => {
     }
 
     const activeSession = await getActiveSession(userPrivyId);
+    console.log("the active session is: ", activeSession);
     if (!activeSession) {
       return res.status(404).send("No active session found.");
     }
+    const startingSessionTimestamp = new Date(
+      activeSession.startTime
+    ).getTime();
+    console.log("HEEEER", startingSessionTimestamp);
     const serverTimeUserWrote = Math.floor(
-      (finishTimestamp - activeSession.startingTimestamp) / 1000
+      (finishTimestamp - startingSessionTimestamp) / 1000
     );
-    const isValid = Math.abs(serverTimeUserWrote - frontendWrittenTime) < 3;
+    console.log("the server time the user wrote is", serverTimeUserWrote);
+    const isValid = Math.abs(serverTimeUserWrote - frontendWrittenTime) < 3000;
     if (isValid) {
+      console.log("IS VALID!");
       const updatedSession = await prisma.writingSession.update({
         where: { id: activeSession.id },
         data: {
@@ -250,6 +277,7 @@ app.post("/end-session", checkIfValidUser, async (req, res) => {
           status: "completed",
         },
       });
+      console.log("the updated session is: ", updatedSession);
 
       res.status(200).json(updatedSession);
     } else {
