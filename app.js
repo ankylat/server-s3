@@ -68,7 +68,7 @@ const checkIfValidUser = async (req, res, next) => {
 
 // ********* ROUTES ***********
 
-app.get("/", checkIfValidUser, (req, res) => {
+app.get("/", (req, res) => {
   res.send("hello world");
 });
 
@@ -295,6 +295,26 @@ app.post("/end-session", checkIfValidUser, async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send("An error occurred while ending the session.");
+  }
+});
+
+app.post("/save-cid", checkIfValidUser, async (req, res) => {
+  try {
+    const cid = req.body.cid;
+    const sessionId = req.body.sessionId;
+    const userPrivyId = req.body.user;
+    if (cid) {
+      const updatedSession = await prisma.writingSession.update({
+        where: { id: sessionId, userId: userPrivyId },
+        data: {
+          writingCID: cid,
+        },
+      });
+      console.log("the updated session is: ", updatedSession);
+      return res.status(200).send("The cid was added to the session");
+    }
+  } catch (error) {
+    res.status(500).send("There was an error saving the cid");
   }
 });
 
