@@ -20,6 +20,7 @@ model User {
   Newen                          Newen[]
   NewenTransaction               NewenTransaction[]
   lastNotified                  DateTime?
+  wroteToday                   Boolean        @default(false)
 }
 
 model Emails {
@@ -40,7 +41,7 @@ model NewenTransaction {
   user      User     @relation(fields: [userId], references: [privyId])
   userId    String
   amount    Int
-  type      String // "earned" or "spent"
+  type      String // "earned"
   createdAt DateTime @default(now())
   cid       String?
 }

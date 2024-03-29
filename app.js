@@ -17,6 +17,28 @@ app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 const port = 3000;
 
+const minimumWritingTime = 10;
+
+// const startingTimestamp = 1711861200; // Example starting point timestamp
+// const startDate = moment.unix(startingTimestamp);
+
+// const cronExpression = startDate.minute() + " " + startDate.hour() + " * * *";
+// console.log(`Cron expression: ${cronExpression}`);
+
+// schedule(cronExpression, async () => {
+//   console.log("Resetting wroteToday for all users");
+//   try {
+//     await prisma.user.updateMany({
+//       data: {
+//         wroteToday: false,
+//       },
+//     });
+//     console.log("Successfully reset wroteToday for all users");
+//   } catch (error) {
+//     console.error("Error resetting wroteToday for users:", error);
+//   }
+// });
+
 // ******** CRON JOBS ***********
 
 cron.schedule("*/30 * * * *", async () => {
@@ -202,6 +224,7 @@ async function updateStreak(privyId) {
       createdAt: "asc",
     },
   });
+  console.log("the newen records for this user are: ", newenRecords);
 
   if (!newenRecords || newenRecords.length === 0) {
     return { ok: true, streak: 0 };
@@ -236,7 +259,11 @@ async function updateStreak(privyId) {
   // Update the user's streak and longest streak if necessary
   await prisma.user.update({
     where: { privyId },
-    data: { streak: dailyStreak, longestStreak: newLongestStreak },
+    data: {
+      streak: dailyStreak,
+      longestStreak: newLongestStreak,
+      wroteToday: true,
+    },
   });
 
   return { ok: true, streak: dailyStreak, longestStreak: newLongestStreak };
@@ -267,9 +294,34 @@ app.post("/end-session", checkIfValidUser, async (req, res) => {
       (finishTimestamp - startingSessionTimestamp) / 1000
     );
     console.log("the server time the user wrote is", serverTimeUserWrote);
-    const isValid = Math.abs(serverTimeUserWrote - frontendWrittenTime) < 3000;
+    const delay = Math.abs(serverTimeUserWrote - frontendWrittenTime);
+    const isValid =
+      delay < 3000 &&
+      Math.min(serverTimeUserWrote, frontendWrittenTime) > minimumWritingTime;
     if (isValid) {
       console.log("IS VALID!");
+      let newenAmount = 7025;
+      const transaction = await prisma.$transaction([
+        prisma.newenTransaction.create({
+          data: {
+            userId: userPrivyId,
+            amount: newenAmount,
+            type: "earned",
+          },
+        }),
+        prisma.user.update({
+          where: { privyId: userPrivyId },
+          data: {
+            newenBalance: {
+              increment: newenAmount,
+            },
+            totalNewenEarned: {
+              increment: newenAmount,
+            },
+          },
+        }),
+      ]);
+      const userStreak = await updateStreak(userPrivyId);
       const updatedSession = await prisma.writingSession.update({
         where: { id: activeSession.id },
         data: {
@@ -277,6 +329,7 @@ app.post("/end-session", checkIfValidUser, async (req, res) => {
           status: "completed",
         },
       });
+      updatedSession.streakInfo = userStreak;
       console.log("the updated session is: ", updatedSession);
 
       res.status(200).json(updatedSession);
