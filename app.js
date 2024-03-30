@@ -84,7 +84,7 @@ async function getMentorOwners() {
   );
 }
 
-getMentorOwners();
+// getMentorOwners();
 
 // ******** CRON JOBS ***********
 
@@ -332,13 +332,16 @@ app.post("/end-session", checkIfValidUser, async (req, res) => {
     if (isValid) {
       console.log("IS VALID!");
       let newenAmount = 7025;
+      const ankyMentor = await prisma.ankyMentors.findFirst({
+        where: { owner: userWallet },
+      });
       const transaction = await prisma.$transaction([
         prisma.newenTransaction.create({
           data: {
             userId: userPrivyId,
             amount: newenAmount,
             type: "earned",
-            mentorIndex: 222,
+            mentorIndex: ankyMentor.mentorIndex,
           },
         }),
         prisma.user.update({

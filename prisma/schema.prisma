@@ -48,6 +48,7 @@ model NewenTransaction {
   type      String // "earned"
   createdAt DateTime @default(now())
   cid       String?
+  mentorIndex   Int?
 }
 
 model WritingSession {
