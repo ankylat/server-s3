@@ -84,7 +84,7 @@ async function getMentorOwners() {
   );
 }
 
-// getMentorOwners();
+getMentorOwners();
 
 // ******** CRON JOBS ***********
 
@@ -306,6 +306,7 @@ app.post("/end-session", checkIfValidUser, async (req, res) => {
     const finishTimestamp = req.body.timestamp;
     const userPrivyId = req.body.user;
     const frontendWrittenTime = req.body.frontendWrittenTime;
+    const userWallet = req.body.userWallet;
 
     // Validate userPrivyId format and fetch the active session
     if (!isValidPrivyId(userPrivyId)) {
