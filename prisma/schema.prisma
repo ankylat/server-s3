@@ -15,12 +15,16 @@ model User {
   streak                        Int               @default(0)
   longestStreak                 Int?              @default(0)
   writingSessions               WritingSession[]
-  newenBalance                   Int               @default(0)
-  totalNewenEarned               Int               @default(0)
-  Newen                          Newen[]
-  NewenTransaction               NewenTransaction[]
+  newenBalance                  Int               @default(0)
+  totalNewenEarned              Int               @default(0)
+  Newen                         Newen[]
+  NewenTransaction              NewenTransaction[]
   lastNotified                  DateTime?
-  wroteToday                   Boolean        @default(false)
+  wroteToday                    Boolean        @default(false)
+  todayCid                      String?
+  ankyMentorIndex               Int?
+  ankyverseDay                  Int?
+  walletAddress                 String?
 }
 
 model Emails {
@@ -57,4 +61,12 @@ model WritingSession {
   status              String?
   randomUUID          String?
   flag                Boolean @default(false)
+}
+
+model AnkyMentors {
+  id                  String   @id @default(uuid())
+  mentorIndex         Int?
+  owner               String?
+  ankyverseDay        Int?
+  createdAt DateTime @default(now())
 }

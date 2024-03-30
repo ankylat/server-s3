@@ -5,6 +5,20 @@ const prisma = require("./lib/prismaClient");
 const { PrivyClient } = require("@privy-io/server-auth");
 const cron = require("node-cron");
 const bodyParser = require("body-parser");
+const { ethers } = require("ethers");
+const moment = require("moment");
+const { getAnkyverseDay } = require("./lib/ankyverse");
+const mentorsAbi = require("./lib/mentorsAbi.json");
+
+const provider = new ethers.JsonRpcProvider(process.env.ALCHEMY_RPC_URL);
+
+const contractAddress = "0x6d622549842Bc73A8F2bE146A27F026B646Bf6a1";
+
+const mentorsContract = new ethers.Contract(
+  contractAddress,
+  mentorsAbi,
+  provider
+);
 
 const privy = new PrivyClient(
   process.env.PRIVY_APP_ID,
@@ -19,7 +33,7 @@ const port = 3000;
 
 const minimumWritingTime = 10;
 
-// const startingTimestamp = 1711861200; // Example starting point timestamp
+const startingTimestamp = 1711861200; // Example starting point timestamp
 // const startDate = moment.unix(startingTimestamp);
 
 // const cronExpression = startDate.minute() + " " + startDate.hour() + " * * *";
@@ -31,6 +45,7 @@ const minimumWritingTime = 10;
 //     await prisma.user.updateMany({
 //       data: {
 //         wroteToday: false,
+//         todayCid: ''
 //       },
 //     });
 //     console.log("Successfully reset wroteToday for all users");
@@ -38,6 +53,38 @@ const minimumWritingTime = 10;
 //     console.error("Error resetting wroteToday for users:", error);
 //   }
 // });
+
+function delay(duration) {
+  return new Promise((resolve) => setTimeout(resolve, duration));
+}
+
+async function getMentorOwners() {
+  const ankyverseDay = getAnkyverseDay(new Date());
+  const mentorOwners = [];
+  for (let tokenId = 1; tokenId <= 192; tokenId++) {
+    try {
+      const owner = await mentorsContract.ownerOf(tokenId);
+      console.log(`Token ID ${tokenId} is owned by ${owner}`);
+      const response = await prisma.ankyMentors.create({
+        data: {
+          mentorIndex: tokenId,
+          owner: owner,
+          ankyverseDay: ankyverseDay.wink,
+        },
+      });
+      delay(333);
+      mentorOwners.push(owner);
+    } catch (error) {
+      console.error(`Error fetching owner for token ID ${tokenId}: ${error}`);
+    }
+  }
+  console.log(
+    `all the owners of mentors for day ${ankyverseDay.wink} are: `,
+    mentorOwners
+  );
+}
+
+getMentorOwners();
 
 // ******** CRON JOBS ***********
 
@@ -98,6 +145,7 @@ app.post("/user/:privyId", checkIfValidUser, async (req, res) => {
   try {
     let user;
     const privyId = req.params.privyId;
+    const walletAddress = req.body.walletAddress;
     user = await prisma.user.findUnique({
       where: { privyId },
     });
@@ -105,6 +153,7 @@ app.post("/user/:privyId", checkIfValidUser, async (req, res) => {
       user = await prisma.user.create({
         data: {
           privyId: privyId,
+          walletAddress: walletAddress,
         },
       });
     }
@@ -181,38 +230,6 @@ app.post("/start-session", checkIfValidUser, async (req, res) => {
   }
 });
 
-async function addNewenToUser(userId, newenToAdd, cid = "") {
-  try {
-    if (newenToAdd < 30) return { transaction: null, streakResult: null };
-    const transaction = await prisma.$transaction([
-      prisma.newenTransaction.create({
-        data: {
-          userId,
-          amount: newenToAdd,
-          type: "earned",
-        },
-      }),
-      prisma.user.update({
-        where: { privyId: userId },
-        data: {
-          newenBalance: {
-            increment: newenToAdd,
-          },
-          totalNewenEarned: {
-            increment: newenToAdd,
-          },
-        },
-      }),
-    ]);
-
-    const streakResult = await updateStreak(userId);
-
-    return { transaction, streakResult }; // Returns the result of the transaction
-  } catch (error) {
-    console.log("there was an error adding the newen to the user:", error);
-  }
-}
-
 async function updateStreak(privyId) {
   // Fetch the newen earning records for the user, ordered by date
   const newenRecords = await prisma.newenTransaction.findMany({
@@ -262,7 +279,6 @@ async function updateStreak(privyId) {
     data: {
       streak: dailyStreak,
       longestStreak: newLongestStreak,
-      wroteToday: true,
     },
   });
 
@@ -321,14 +337,16 @@ app.post("/end-session", checkIfValidUser, async (req, res) => {
           },
         }),
       ]);
-      const userStreak = await updateStreak(userPrivyId);
       const updatedSession = await prisma.writingSession.update({
         where: { id: activeSession.id },
         data: {
           endTime: new Date(),
           status: "completed",
+          newenEarned: 7025,
         },
       });
+      const userStreak = await updateStreak(userPrivyId);
+
       updatedSession.streakInfo = userStreak;
       console.log("the updated session is: ", updatedSession);
 
@@ -340,6 +358,7 @@ app.post("/end-session", checkIfValidUser, async (req, res) => {
           endTime: new Date(),
           status: "completed",
           flag: true,
+          newenEarned: 7025,
         },
       });
 
@@ -361,6 +380,14 @@ app.post("/save-cid", checkIfValidUser, async (req, res) => {
         where: { id: sessionId, userId: userPrivyId },
         data: {
           writingCID: cid,
+          status: "completed",
+        },
+      });
+      const updatedUser = await prisma.user.update({
+        where: { privyId: userPrivyId },
+        data: {
+          wroteToday: true,
+          todayCid: cid,
         },
       });
       console.log("the updated session is: ", updatedSession);
