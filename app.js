@@ -33,7 +33,8 @@ const port = 3000;
 
 const minimumWritingTime = 10;
 
-const startingTimestamp = 1711861200 - 86400; // Example starting point timestamp
+const startingTimestamp = 1711861200; // Example starting point timestamp
+
 // const startDate = moment.unix(startingTimestamp);
 
 // const cronExpression = startDate.minute() + " " + startDate.hour() + " * * *";
@@ -84,7 +85,7 @@ async function getMentorOwners() {
   );
 }
 
-getMentorOwners();
+// getMentorOwners();
 
 // ******** CRON JOBS ***********
 
@@ -155,9 +156,7 @@ app.post("/user/:privyId", checkIfValidUser, async (req, res) => {
           walletAddress: walletAddress,
         },
       });
-      console.log("the user is: ", user);
     }
-    console.log("the mentors are: ", mentors);
     res.json({ user, mentor: mentors[0] });
   } catch (error) {
     console.log("there was an error", error);
@@ -204,14 +203,12 @@ app.post("/check-user", checkIfValidUser, async (req, res) => {
 
 app.post("/start-session", checkIfValidUser, async (req, res) => {
   try {
-    console.log("starting the session", req.body);
     const userPrivyId = req.body.userPrivyId;
     const now = req.body.timestamp;
     const randomUUID = req.body.randomUUID;
     const userWallet = req.body.wallet;
     // Validate the userPrivyId format and check for an existing active session
     if (!isValidPrivyId(userPrivyId)) {
-      console.log("aloja");
       return res.status(400).send("Invalid request.");
     }
     const ankyMentor = await prisma.ankyMentors.findFirst({
@@ -236,7 +233,6 @@ app.post("/start-session", checkIfValidUser, async (req, res) => {
         mentorIndex: ankyMentor.mentorIndex,
       },
     });
-    console.log("the new session is: ", newSession);
 
     res.status(201).json(newSession);
   } catch (error) {
@@ -256,7 +252,6 @@ async function updateStreak(privyId) {
       createdAt: "asc",
     },
   });
-  console.log("the newen records for this user are: ", newenRecords);
 
   if (!newenRecords || newenRecords.length === 0) {
     return { ok: true, streak: 0 };
@@ -302,7 +297,6 @@ async function updateStreak(privyId) {
 
 app.post("/end-session", checkIfValidUser, async (req, res) => {
   try {
-    console.log("inside the end session route", req.body);
     const finishTimestamp = req.body.timestamp;
     const userPrivyId = req.body.user;
     const frontendWrittenTime = req.body.frontendWrittenTime;
@@ -314,24 +308,20 @@ app.post("/end-session", checkIfValidUser, async (req, res) => {
     }
 
     const activeSession = await getActiveSession(userPrivyId);
-    console.log("the active session is: ", activeSession);
     if (!activeSession) {
       return res.status(404).send("No active session found.");
     }
     const startingSessionTimestamp = new Date(
       activeSession.startTime
     ).getTime();
-    console.log("HEEEER", startingSessionTimestamp);
     const serverTimeUserWrote = Math.floor(
       (finishTimestamp - startingSessionTimestamp) / 1000
     );
-    console.log("the server time the user wrote is", serverTimeUserWrote);
     const delay = Math.abs(serverTimeUserWrote - frontendWrittenTime);
     const isValid =
       delay < 3000 &&
       Math.min(serverTimeUserWrote, frontendWrittenTime) > minimumWritingTime;
     if (isValid) {
-      console.log("IS VALID!");
       let newenAmount = 7025;
       const ankyMentor = await prisma.ankyMentors.findFirst({
         where: { owner: userWallet },
@@ -368,7 +358,6 @@ app.post("/end-session", checkIfValidUser, async (req, res) => {
       const userStreak = await updateStreak(userPrivyId);
 
       updatedSession.streakInfo = userStreak;
-      console.log("the updated session is: ", updatedSession);
 
       res.status(200).json(updatedSession);
     } else {
@@ -410,7 +399,6 @@ app.post("/save-cid", checkIfValidUser, async (req, res) => {
           todayCid: cid,
         },
       });
-      console.log("the updated session is: ", updatedSession);
       return res.status(200).send("The cid was added to the session");
     }
   } catch (error) {
