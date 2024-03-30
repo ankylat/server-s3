@@ -146,7 +146,7 @@ app.post("/user/:privyId", checkIfValidUser, async (req, res) => {
     let user;
     const privyId = req.params.privyId;
     const walletAddress = req.body.walletAddress;
-    const mentor = await prisma.ankyMentors.findOne({
+    const mentors = await prisma.ankyMentors.findMany({
       where: { owner: walletAddress },
     });
     user = await prisma.user.findUnique({
@@ -160,8 +160,7 @@ app.post("/user/:privyId", checkIfValidUser, async (req, res) => {
         },
       });
     }
-    console.log("IN HERE, THE USER IS: ", user);
-    res.json({ user, mentor });
+    res.json({ user, mentor: mentors[0] });
   } catch (error) {
     console.log("there was an error", error);
   }
