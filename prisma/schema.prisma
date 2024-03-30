@@ -61,6 +61,7 @@ model WritingSession {
   status              String?
   randomUUID          String?
   flag                Boolean @default(false)
+  mentorIndex         Int?
 }
 
 model AnkyMentors {

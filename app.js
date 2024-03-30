@@ -80,11 +80,11 @@ async function getMentorOwners() {
   }
   console.log(
     `all the owners of mentors for day ${ankyverseDay.wink} are: `,
-    mentorOwners
+    mentorOwners.join(",")
   );
 }
 
-// getMentorOwners();
+getMentorOwners();
 
 // ******** CRON JOBS ***********
 
@@ -208,10 +208,23 @@ app.post("/start-session", checkIfValidUser, async (req, res) => {
     const userPrivyId = req.body.userPrivyId;
     const now = req.body.timestamp;
     const randomUUID = req.body.randomUUID;
+    const userWallet = req.body.wallet;
     // Validate the userPrivyId format and check for an existing active session
     if (!isValidPrivyId(userPrivyId)) {
       console.log("aloja");
       return res.status(400).send("Invalid request.");
+    }
+    const ankyMentor = await prisma.ankyMentors.findFirst({
+      where: { owner: userWallet },
+    });
+    const user = await prisma.user.findUnique({
+      where: { privyId: userPrivyId },
+    });
+
+    if (ankyMentor.wroteToday || user.wroteToday) {
+      res
+        .status(201)
+        .json({ message: "this session is invalid, the user already wrote" });
     }
 
     const newSession = await prisma.writingSession.create({
@@ -220,6 +233,7 @@ app.post("/start-session", checkIfValidUser, async (req, res) => {
         startTime: now,
         status: "active",
         randomUUID: randomUUID,
+        mentorIndex: ankyMentor.mentorIndex,
       },
     });
     console.log("the new session is: ", newSession);
@@ -324,6 +338,7 @@ app.post("/end-session", checkIfValidUser, async (req, res) => {
             userId: userPrivyId,
             amount: newenAmount,
             type: "earned",
+            mentorIndex: 222,
           },
         }),
         prisma.user.update({
