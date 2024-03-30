@@ -72,7 +72,7 @@ async function getMentorOwners() {
           ankyverseDay: ankyverseDay.wink,
         },
       });
-      delay(333);
+      delay(111);
       mentorOwners.push(owner);
     } catch (error) {
       console.error(`Error fetching owner for token ID ${tokenId}: ${error}`);
@@ -146,6 +146,9 @@ app.post("/user/:privyId", checkIfValidUser, async (req, res) => {
     let user;
     const privyId = req.params.privyId;
     const walletAddress = req.body.walletAddress;
+    const mentor = await prisma.ankyMentors.findOne({
+      where: { owner: walletAddress },
+    });
     user = await prisma.user.findUnique({
       where: { privyId },
     });
@@ -157,7 +160,8 @@ app.post("/user/:privyId", checkIfValidUser, async (req, res) => {
         },
       });
     }
-    res.json({ user });
+    console.log("IN HERE, THE USER IS: ", user);
+    res.json({ user, mentor });
   } catch (error) {
     console.log("there was an error", error);
   }
