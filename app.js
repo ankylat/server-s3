@@ -33,7 +33,7 @@ const port = 3000;
 
 const minimumWritingTime = 10;
 
-const startingTimestamp = 1711861200; // Example starting point timestamp
+const startingTimestamp = 1711861200 - 86400; // Example starting point timestamp
 // const startDate = moment.unix(startingTimestamp);
 
 // const cronExpression = startDate.minute() + " " + startDate.hour() + " * * *";
@@ -84,7 +84,7 @@ async function getMentorOwners() {
   );
 }
 
-getMentorOwners();
+// getMentorOwners();
 
 // ******** CRON JOBS ***********
 
@@ -120,10 +120,6 @@ const checkIfValidUser = async (req, res, next) => {
 
     try {
       const verifiedClaims = await privy.verifyAuthToken(authToken);
-
-      console.log("the verified claims is: ", verifiedClaims);
-      console.log("the user id is: ", verifiedClaims.userId);
-      // CHECK AGAINST THE PRIVY ID OF THE USER THAT IS TRYING TO DO THIS.
       next();
     } catch (error) {
       console.log(`token verification failed with error ${error}.`);
@@ -159,7 +155,9 @@ app.post("/user/:privyId", checkIfValidUser, async (req, res) => {
           walletAddress: walletAddress,
         },
       });
+      console.log("the user is: ", user);
     }
+    console.log("the mentors are: ", mentors);
     res.json({ user, mentor: mentors[0] });
   } catch (error) {
     console.log("there was an error", error);

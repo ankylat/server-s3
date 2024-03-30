@@ -64,9 +64,10 @@ model WritingSession {
 }
 
 model AnkyMentors {
-  id                  String   @id @default(uuid())
-  mentorIndex         Int?
-  owner               String?
-  ankyverseDay        Int?
-  createdAt DateTime @default(now())
+  id                   String   @id @default(uuid())
+  mentorIndex          Int?
+  owner                String?
+  ankyverseDay         Int?
+  createdAt DateTime   @default(now())
+  wroteToday           Boolean @default(false)
 }
