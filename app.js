@@ -117,7 +117,7 @@ cron.schedule("*/30 * * * *", async () => {
 
 const checkIfValidUser = async (req, res, next) => {
   try {
-    const authToken = req.headers.authorization.replace("Bearer ", "");
+    const authToken = req.headers?.authorization?.replace("Bearer ", "");
 
     try {
       const verifiedClaims = await privy.verifyAuthToken(authToken);
@@ -127,7 +127,7 @@ const checkIfValidUser = async (req, res, next) => {
       res.status(401).json({ message: "you are not allowed here" });
     }
   } catch (error) {
-    console.log("The user is not authorized");
+    console.log("The user is not authorized", error);
     res.status(401).json({ message: "Not authorized" }); // Sending 401 for unauthorized requests
   }
 };
@@ -322,6 +322,36 @@ app.post("/end-session", checkIfValidUser, async (req, res) => {
       delay < 3000 &&
       Math.min(serverTimeUserWrote, frontendWrittenTime) > minimumWritingTime;
     if (isValid) {
+      const updatedSession = await prisma.writingSession.update({
+        where: { id: activeSession.id },
+        data: {
+          endTime: new Date(),
+        },
+      });
+      res.status(200).json(updatedSession);
+    } else {
+      const updatedSession = await prisma.writingSession.update({
+        where: { id: activeSession.id },
+        data: {
+          endTime: new Date(),
+          flag: true,
+        },
+      });
+
+      res.status(200).json(updatedSession);
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("An error occurred while ending the session.");
+  }
+});
+
+app.post("/save-cid", checkIfValidUser, async (req, res) => {
+  try {
+    const cid = req.body.cid;
+    const sessionId = req.body.sessionId;
+    const userPrivyId = req.body.user;
+    if (cid) {
       let newenAmount = 7025;
       const ankyMentor = await prisma.ankyMentors.findFirst({
         where: { owner: userWallet },
@@ -347,49 +377,13 @@ app.post("/end-session", checkIfValidUser, async (req, res) => {
           },
         }),
       ]);
-      const updatedSession = await prisma.writingSession.update({
-        where: { id: activeSession.id },
-        data: {
-          endTime: new Date(),
-          status: "completed",
-          newenEarned: 7025,
-        },
-      });
-      const userStreak = await updateStreak(userPrivyId);
-
-      updatedSession.streakInfo = userStreak;
-
-      res.status(200).json(updatedSession);
-    } else {
-      const updatedSession = await prisma.writingSession.update({
-        where: { id: activeSession.id },
-        data: {
-          endTime: new Date(),
-          status: "completed",
-          flag: true,
-          newenEarned: 7025,
-        },
-      });
-
-      res.status(200).json(updatedSession);
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("An error occurred while ending the session.");
-  }
-});
-
-app.post("/save-cid", checkIfValidUser, async (req, res) => {
-  try {
-    const cid = req.body.cid;
-    const sessionId = req.body.sessionId;
-    const userPrivyId = req.body.user;
-    if (cid) {
+      await updateStreak(userPrivyId);
       const updatedSession = await prisma.writingSession.update({
         where: { id: sessionId, userId: userPrivyId },
         data: {
           writingCID: cid,
           status: "completed",
+          newenEarned: 7025,
         },
       });
       const updatedUser = await prisma.user.update({
