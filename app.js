@@ -117,7 +117,7 @@ cron.schedule("*/30 * * * *", async () => {
 
 const checkIfValidUser = async (req, res, next) => {
   try {
-    const authToken = req.headers?.authorization?.replace("Bearer ", "");
+    const authToken = req.headers.authorization.replace("Bearer ", "");
 
     try {
       const verifiedClaims = await privy.verifyAuthToken(authToken);
