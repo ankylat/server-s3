@@ -140,24 +140,26 @@ app.get("/", (req, res) => {
 
 app.post("/user/:privyId", checkIfValidUser, async (req, res) => {
   try {
-    let user;
     const privyId = req.params.privyId;
     const walletAddress = req.body.walletAddress;
-    const mentors = await prisma.ankyMentors.findMany({
+
+    const ankyMentor = await prisma.ankyMentors.findFirst({
       where: { owner: walletAddress },
+      orderBy: {
+        mentorIndex: "asc",
+      },
     });
-    user = await prisma.user.findUnique({
+
+    const user = await prisma.user.upsert({
       where: { privyId },
+      update: {},
+      create: {
+        privyId: privyId,
+        walletAddress: walletAddress,
+      },
     });
-    if (!user) {
-      user = await prisma.user.create({
-        data: {
-          privyId: privyId,
-          walletAddress: walletAddress,
-        },
-      });
-    }
-    res.json({ user, mentor: mentors[0] });
+
+    res.json({ user, mentor: ankyMentor });
   } catch (error) {
     console.log("there was an error", error);
   }
@@ -207,22 +209,35 @@ app.post("/start-session", checkIfValidUser, async (req, res) => {
     const now = req.body.timestamp;
     const randomUUID = req.body.randomUUID;
     const userWallet = req.body.wallet;
+
     // Validate the userPrivyId format and check for an existing active session
+
     if (!isValidPrivyId(userPrivyId)) {
       return res.status(400).send("Invalid request.");
     }
+
     const ankyMentor = await prisma.ankyMentors.findFirst({
       where: { owner: userWallet },
+      orderBy: {
+        mentorIndex: "asc",
+      },
     });
-    const user = await prisma.user.findUnique({
+
+    const user = await prisma.user.upsert({
       where: { privyId: userPrivyId },
+      update: {},
+      create: {
+        privyId: userPrivyId,
+        walletAddress: userWallet,
+      },
     });
 
     if (ankyMentor.wroteToday || user.wroteToday) {
-      res
+      return res
         .status(201)
         .json({ message: "this session is invalid, the user already wrote" });
     }
+    const ankyverseDay = getAnkyverseDay(new Date());
 
     const newSession = await prisma.writingSession.create({
       data: {
@@ -231,6 +246,8 @@ app.post("/start-session", checkIfValidUser, async (req, res) => {
         status: "active",
         randomUUID: randomUUID,
         mentorIndex: ankyMentor.mentorIndex,
+        walletAddress: userWallet,
+        ankyverseDay: ankyverseDay.wink,
       },
     });
 
@@ -347,57 +364,61 @@ app.post("/end-session", checkIfValidUser, async (req, res) => {
 });
 
 app.post("/save-cid", checkIfValidUser, async (req, res) => {
+  const { cid, sessionId, user: userPrivyId, wallet: userWallet } = req.body;
+  if (!cid) {
+    return res.status(400).send("CID is required.");
+  }
   try {
-    const cid = req.body.cid;
-    const sessionId = req.body.sessionId;
-    const userPrivyId = req.body.user;
-    const userWallet = req.body.wallet;
-    if (cid) {
-      let newenAmount = 7025;
+    const result = prisma.$transaction(async (prisma) => {
+      const session = await prisma.writingSession.findUnique({
+        where: { id: sessionId, userId: userPrivyId },
+      });
+      if (!session) {
+        throw new Error("Session not found");
+      }
       const ankyMentor = await prisma.ankyMentors.findFirst({
         where: { owner: userWallet },
-      });
-      const transaction = await prisma.$transaction([
-        prisma.newenTransaction.create({
-          data: {
-            userId: userPrivyId,
-            amount: newenAmount,
-            type: "earned",
-            mentorIndex: ankyMentor.mentorIndex,
-          },
-        }),
-        prisma.user.update({
-          where: { privyId: userPrivyId },
-          data: {
-            newenBalance: {
-              increment: newenAmount,
-            },
-            totalNewenEarned: {
-              increment: newenAmount,
-            },
-          },
-        }),
-      ]);
-      await updateStreak(userPrivyId);
-      const updatedSession = await prisma.writingSession.update({
-        where: { id: sessionId, userId: userPrivyId },
-        data: {
-          writingCID: cid,
-          status: "completed",
-          newenEarned: 7025,
+        orderBy: {
+          mentorIndex: "asc",
         },
       });
-      const updatedUser = await prisma.user.update({
+      if (!ankyMentor) {
+        throw new Error("mentor not found");
+      }
+      const newenAmount = 7025;
+      const transaction = await prisma.newenTransaction.create({
+        data: {
+          userId: userPrivyId,
+          amount: newenAmount,
+          type: "earned",
+          mentorIndex: ankyMentor.mentorIndex,
+        },
+      });
+      const userUpdate = await prisma.user.update({
         where: { privyId: userPrivyId },
         data: {
+          newenBalance: { increment: newenAmount },
+          totalNewenEarned: { increment: newenAmount },
           wroteToday: true,
           todayCid: cid,
         },
       });
-      return res.status(200).send("The cid was added to the session");
-    }
+      const sessionUpdate = await prisma.writingSession.update({
+        where: { id: sessionId },
+        data: {
+          writingCID: cid,
+          status: "completed",
+          newenEarned: newenAmount,
+        },
+      });
+      return { transaction, userUpdate, sessionUpdate };
+    });
+    await updateStreak(userPrivyId);
+    res
+      .status(200)
+      .json({ message: "The cid was added to the session", result });
   } catch (error) {
-    console.log("there was an error saving the cid", error);
+    console.error("There was an error saving the cid", error);
     res.status(500).send("There was an error saving the cid");
   }
 });

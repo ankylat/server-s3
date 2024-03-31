@@ -63,6 +63,8 @@ model WritingSession {
   randomUUID          String?
   flag                Boolean @default(false)
   mentorIndex         Int?
+  walletAddress       String?
+  ankyverseDay        Int?
 }
 
 model AnkyMentors {
