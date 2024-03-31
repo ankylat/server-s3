@@ -396,6 +396,7 @@ app.post("/save-cid", checkIfValidUser, async (req, res) => {
       return res.status(200).send("The cid was added to the session");
     }
   } catch (error) {
+    console.log("there was an error saving the cid", error);
     res.status(500).send("There was an error saving the cid");
   }
 });
