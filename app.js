@@ -351,6 +351,7 @@ app.post("/save-cid", checkIfValidUser, async (req, res) => {
     const cid = req.body.cid;
     const sessionId = req.body.sessionId;
     const userPrivyId = req.body.user;
+    const userWallet = req.body.wallet;
     if (cid) {
       let newenAmount = 7025;
       const ankyMentor = await prisma.ankyMentors.findFirst({
