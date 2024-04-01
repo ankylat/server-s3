@@ -55,6 +55,21 @@ const startingTimestamp = 1711861200; // Example starting point timestamp
 //   }
 // });
 
+async function startAgain() {
+  console.log("Resetting wroteToday for all users");
+  try {
+    await prisma.user.updateMany({
+      data: {
+        wroteToday: false,
+        todayCid: "",
+      },
+    });
+    console.log("Successfully reset wroteToday for all users");
+  } catch (error) {
+    console.error("Error resetting wroteToday for users:", error);
+  }
+}
+
 function delay(duration) {
   return new Promise((resolve) => setTimeout(resolve, duration));
 }
@@ -62,30 +77,44 @@ function delay(duration) {
 async function getMentorOwners() {
   const ankyverseDay = getAnkyverseDay(new Date());
   const mentorOwners = [];
+  let newOwners = "";
+
   for (let tokenId = 1; tokenId <= 192; tokenId++) {
     try {
-      const owner = await mentorsContract.ownerOf(tokenId);
-      console.log(`Token ID ${tokenId} is owned by ${owner}`);
-      const response = await prisma.ankyMentors.create({
-        data: {
-          mentorIndex: tokenId,
-          owner: owner,
-          ankyverseDay: ankyverseDay.wink,
-        },
+      const newOwner = await mentorsContract.ownerOf(tokenId);
+      console.log(`Token ID ${tokenId} is owned by ${newOwner}`);
+
+      const mentorRecord = await prisma.ankyMentors.findMany({
+        where: { mentorIndex: tokenId },
       });
-      delay(111);
-      mentorOwners.push(owner);
+
+      if (mentorRecord[0] && mentorRecord[0].owner !== newOwner) {
+        newOwners += `${newOwner}, `;
+        await prisma.ankyMentors.update({
+          where: { mentorIndex: tokenId },
+          data: {
+            owner: newOwner,
+            ankyverseDay: ankyverseDay.wink,
+            changeCount: { increment: 1 },
+          },
+        });
+      }
+
+      mentorOwners.push(newOwner);
+      await delay(111); // Ensure delay is a properly defined async function
     } catch (error) {
       console.error(`Error fetching owner for token ID ${tokenId}: ${error}`);
     }
   }
+  console.log("all the new owners are: ", newOwners);
   console.log(
-    `all the owners of mentors for day ${ankyverseDay.wink} are: `,
+    `All the owners of mentors for day ${ankyverseDay.wink} are: `,
     mentorOwners.join(",")
   );
 }
 
 // getMentorOwners();
+// startAgain();
 
 // ******** CRON JOBS ***********
 
