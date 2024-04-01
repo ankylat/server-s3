@@ -276,7 +276,7 @@ app.post("/start-session", checkIfValidUser, async (req, res) => {
         randomUUID: randomUUID,
         mentorIndex: ankyMentor.mentorIndex,
         walletAddress: userWallet,
-        ankyverseDay: ankyverseDay.wink,
+        ankyverseDay: 2,
       },
     });
 
@@ -347,6 +347,7 @@ app.post("/end-session", checkIfValidUser, async (req, res) => {
     const userPrivyId = req.body.user;
     const frontendWrittenTime = req.body.frontendWrittenTime;
     const userWallet = req.body.userWallet;
+    const text = req.body.text;
 
     // Validate userPrivyId format and fetch the active session
     if (!isValidPrivyId(userPrivyId)) {
@@ -372,6 +373,7 @@ app.post("/end-session", checkIfValidUser, async (req, res) => {
         where: { id: activeSession.id },
         data: {
           endTime: new Date(),
+          text: text,
         },
       });
       res.status(200).json(updatedSession);
@@ -381,6 +383,7 @@ app.post("/end-session", checkIfValidUser, async (req, res) => {
         data: {
           endTime: new Date(),
           flag: true,
+          text: text,
         },
       });
 

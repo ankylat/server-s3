@@ -65,6 +65,7 @@ model WritingSession {
   mentorIndex         Int?
   walletAddress       String?
   ankyverseDay        Int?
+  text                String?
 }
 
 model AnkyMentors {
