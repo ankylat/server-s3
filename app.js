@@ -148,18 +148,12 @@ cron.schedule("*/30 * * * *", async () => {
 const checkIfValidUser = async (req, res, next) => {
   try {
     const authToken = req?.headers?.authorization?.replace("Bearer ", "");
-
-    try {
-      const verifiedClaims = await privy.verifyAuthToken(authToken);
-      next();
-    } catch (error) {
-      console.log(`token verification failed with error ${error}.`);
-      next();
-      res.status(401).json({ message: "you are not allowed here" });
-    }
+    const verifiedClaims = await privy.verifyAuthToken(authToken);
+    console.log("the verified claims is: ", verifiedClaims);
+    next();
   } catch (error) {
-    console.log("The user is not authorized", error);
-    res.status(401).json({ message: "Not authorized" }); // Sending 401 for unauthorized requests
+    console.error("Authorization failed", error);
+    res.status(401).json({ message: "Not authorized" });
   }
 };
 
@@ -368,9 +362,8 @@ app.post("/end-session", checkIfValidUser, async (req, res) => {
       (finishTimestamp - startingSessionTimestamp) / 1000
     );
     const delay = Math.abs(serverTimeUserWrote - frontendWrittenTime);
-    const isValid =
-      delay < 3000 &&
-      Math.min(serverTimeUserWrote, frontendWrittenTime) > minimumWritingTime;
+    const sessionDuration = Math.min(serverTimeUserWrote, frontendWrittenTime);
+    const isValid = delay < 3000 && sessionDuration > minimumWritingTime;
     if (isValid) {
       const updatedSession = await prisma.writingSession.update({
         where: { id: activeSession.id },
@@ -378,6 +371,7 @@ app.post("/end-session", checkIfValidUser, async (req, res) => {
           endTime: new Date(),
           text: text,
           result: result,
+          sessionDuration: sessionDuration,
         },
       });
       res.status(200).json(updatedSession);
@@ -389,9 +383,9 @@ app.post("/end-session", checkIfValidUser, async (req, res) => {
           flag: true,
           text: text,
           result: result,
+          sessionDuration: sessionDuration,
         },
       });
-
       res.status(200).json(updatedSession);
     }
   } catch (error) {

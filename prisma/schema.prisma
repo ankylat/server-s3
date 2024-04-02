@@ -25,6 +25,7 @@ model User {
   ankyMentorIndex               Int?
   ankyverseDay                  Int?
   walletAddress                 String?
+  sessionDuration               Int?
 }
 
 model Emails {
@@ -67,6 +68,7 @@ model WritingSession {
   ankyverseDay        Int?
   text                String?
   result              String?
+  sessionDuration     Int?
 }
 
 model AnkyMentors {
