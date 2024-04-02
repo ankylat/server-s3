@@ -204,20 +204,20 @@ app.post("/check-user", checkIfValidUser, async (req, res) => {
     if (!privyUser)
       return res.status(500).json({ message: "You are not authorized here" });
 
-    let user = await prisma.newUser.findUnique({
+    let user = await prisma.user.findUnique({
       where: { privyId },
     });
 
     if (!user) {
       // If not, create a new user
-      user = await prisma.newUser.create({
+      user = await prisma.user.create({
         data: {
           privyId,
         },
       });
     } else {
       // If yes, update the last login time
-      user = await prisma.newUser.update({
+      user = await prisma.user.update({
         where: { privyId },
         data: {
           lastLogin: new Date(),
