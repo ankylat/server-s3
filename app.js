@@ -314,7 +314,7 @@ async function updateStreak(privyId) {
     // Set time to midnight for comparison
     prevDate.setHours(0, 0, 0, 0);
     currDate.setHours(0, 0, 0, 0);
-
+    const MS_PER_DAY = 24 * 60 * 60 * 1000;
     if (currDate - prevDate === MS_PER_DAY) {
       dailyStreak += 1;
     } else if (currDate - prevDate > MS_PER_DAY) {
