@@ -31,7 +31,7 @@ app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 const port = 3000;
 
-const minimumWritingTime = 10;
+const minimumWritingTime = 7;
 
 const startingTimestamp = 1711861200; // Example starting point timestamp
 
@@ -350,6 +350,7 @@ app.post("/end-session", checkIfValidUser, async (req, res) => {
     const frontendWrittenTime = req.body.frontendWrittenTime;
     const userWallet = req.body.userWallet;
     const text = req.body.text;
+    const result = req.body.result;
 
     // Validate userPrivyId format and fetch the active session
     if (!isValidPrivyId(userPrivyId)) {
@@ -376,6 +377,7 @@ app.post("/end-session", checkIfValidUser, async (req, res) => {
         data: {
           endTime: new Date(),
           text: text,
+          result: result,
         },
       });
       res.status(200).json(updatedSession);
@@ -386,6 +388,7 @@ app.post("/end-session", checkIfValidUser, async (req, res) => {
           endTime: new Date(),
           flag: true,
           text: text,
+          result: result,
         },
       });
 

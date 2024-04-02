@@ -66,6 +66,7 @@ model WritingSession {
   walletAddress       String?
   ankyverseDay        Int?
   text                String?
+  result              String?
 }
 
 model AnkyMentors {
