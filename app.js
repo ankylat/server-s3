@@ -35,28 +35,8 @@ const minimumWritingTime = 10;
 
 const startingTimestamp = 1711861200; // Example starting point timestamp
 
-// const startDate = moment.unix(startingTimestamp);
-
-// const cronExpression = startDate.minute() + " " + startDate.hour() + " * * *";
-// console.log(`Cron expression: ${cronExpression}`);
-
-// schedule(cronExpression, async () => {
-//   console.log("Resetting wroteToday for all users");
-//   try {
-//     await prisma.user.updateMany({
-//       data: {
-//         wroteToday: false,
-//         todayCid: ''
-//       },
-//     });
-//     console.log("Successfully reset wroteToday for all users");
-//   } catch (error) {
-//     console.error("Error resetting wroteToday for users:", error);
-//   }
-// });
-
 async function startAgain() {
-  console.log("Resetting wroteToday for all users");
+  console.log("inside the start again function");
   try {
     await prisma.user.updateMany({
       data: {
@@ -64,11 +44,31 @@ async function startAgain() {
         todayCid: "",
       },
     });
+    getMentorOwners();
     console.log("Successfully reset wroteToday for all users");
   } catch (error) {
     console.error("Error resetting wroteToday for users:", error);
   }
 }
+
+function scheduleStartAgain() {
+  const startDate = new Date(startingTimestamp * 1000); // Convert to milliseconds
+  const hour = startDate.getUTCHours();
+  const minute = startDate.getUTCMinutes();
+  const second = startDate.getUTCSeconds();
+
+  // Cron syntax: second minute hour * * *
+  const cronTime = `${second} ${minute} ${hour} * * *`;
+
+  cron.schedule(cronTime, () => {
+    console.log("startAgain function is triggered");
+    startAgain();
+  });
+
+  console.log(`Scheduled to run every day at ${hour}:${minute}:${second} UTC`);
+}
+// startAgain();
+//scheduleStartAgain();
 
 function delay(duration) {
   return new Promise((resolve) => setTimeout(resolve, duration));
@@ -84,11 +84,11 @@ async function getMentorOwners() {
       const newOwner = await mentorsContract.ownerOf(tokenId);
       console.log(`Token ID ${tokenId} is owned by ${newOwner}`);
 
-      const mentorRecord = await prisma.ankyMentors.findMany({
+      const mentorRecord = await prisma.ankyMentors.findUnique({
         where: { mentorIndex: tokenId },
       });
 
-      if (mentorRecord[0] && mentorRecord[0].owner !== newOwner) {
+      if (mentorRecord && mentorRecord.owner !== newOwner) {
         newOwners += `${newOwner}, `;
         await prisma.ankyMentors.update({
           where: { mentorIndex: tokenId },
@@ -98,6 +98,11 @@ async function getMentorOwners() {
             changeCount: { increment: 1 },
           },
         });
+        const allowlistEntry = await privy.inviteToAllowlist({
+          type: "wallet",
+          value: newOwner,
+        });
+        console.log("the allowlist entry is: ", allowlistEntry);
       }
 
       mentorOwners.push(newOwner);
@@ -107,10 +112,6 @@ async function getMentorOwners() {
     }
   }
   console.log("all the new owners are: ", newOwners);
-  console.log(
-    `All the owners of mentors for day ${ankyverseDay.wink} are: `,
-    mentorOwners.join(",")
-  );
 }
 
 // getMentorOwners();
@@ -146,13 +147,14 @@ cron.schedule("*/30 * * * *", async () => {
 
 const checkIfValidUser = async (req, res, next) => {
   try {
-    const authToken = req.headers.authorization.replace("Bearer ", "");
+    const authToken = req?.headers?.authorization?.replace("Bearer ", "");
 
     try {
       const verifiedClaims = await privy.verifyAuthToken(authToken);
       next();
     } catch (error) {
       console.log(`token verification failed with error ${error}.`);
+      next();
       res.status(401).json({ message: "you are not allowed here" });
     }
   } catch (error) {
