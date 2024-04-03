@@ -59,7 +59,7 @@ function scheduleStartAgain() {
 
   // Cron syntax: second minute hour * * *
   const cronTime = `${second} ${minute} ${hour} * * *`;
-
+  console.log("scheduling the start again", cronTime);
   cron.schedule(cronTime, () => {
     console.log("startAgain function is triggered");
     startAgain();
@@ -68,7 +68,7 @@ function scheduleStartAgain() {
   console.log(`Scheduled to run every day at ${hour}:${minute}:${second} UTC`);
 }
 // startAgain();
-//scheduleStartAgain();
+scheduleStartAgain();
 
 function delay(duration) {
   return new Promise((resolve) => setTimeout(resolve, duration));
@@ -76,6 +76,10 @@ function delay(duration) {
 
 async function getMentorOwners() {
   const ankyverseDay = getAnkyverseDay(new Date());
+  console.log(
+    "inside the get mentor owners function, the ankyverse day is: ",
+    ankyverseDay
+  );
   const mentorOwners = [];
   let newOwners = "";
 
@@ -94,7 +98,7 @@ async function getMentorOwners() {
           where: { mentorIndex: tokenId },
           data: {
             owner: newOwner,
-            ankyverseDay: ankyverseDay.wink,
+            ankyverseDay: 4,
             changeCount: { increment: 1 },
           },
         });
