@@ -276,7 +276,7 @@ app.post("/start-session", checkIfValidUser, async (req, res) => {
         randomUUID: randomUUID,
         mentorIndex: ankyMentor.mentorIndex,
         walletAddress: userWallet,
-        ankyverseDay: 3,
+        ankyverseDay: 5,
       },
     });
 
