@@ -98,7 +98,7 @@ async function getMentorOwners() {
           where: { mentorIndex: tokenId },
           data: {
             owner: newOwner,
-            ankyverseDay: 4,
+            ankyverseDay: 6,
             changeCount: { increment: 1 },
           },
         });
@@ -153,7 +153,6 @@ const checkIfValidUser = async (req, res, next) => {
   try {
     const authToken = req?.headers?.authorization?.replace("Bearer ", "");
     const verifiedClaims = await privy.verifyAuthToken(authToken);
-    console.log("the verified claims is: ", verifiedClaims);
     next();
   } catch (error) {
     console.error("Authorization failed", error);
@@ -276,7 +275,7 @@ app.post("/start-session", checkIfValidUser, async (req, res) => {
         randomUUID: randomUUID,
         mentorIndex: ankyMentor.mentorIndex,
         walletAddress: userWallet,
-        ankyverseDay: 5,
+        ankyverseDay: 6,
       },
     });
 
