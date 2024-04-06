@@ -33,10 +33,8 @@ const port = 3000;
 
 const minimumWritingTime = 7;
 
-const startingTimestamp = 1711861200; // Example starting point timestamp
-
-async function startAgain() {
-  console.log("inside the start again function");
+async function startNewDayOnTheAnkyverse() {
+  console.log("inside the startNewDayOnTheAnkyverse function");
   try {
     await prisma.user.updateMany({
       data: {
@@ -44,15 +42,15 @@ async function startAgain() {
         todayCid: "",
       },
     });
-    getMentorOwners();
+    updateMentorOwners();
     console.log("Successfully reset wroteToday for all users");
   } catch (error) {
     console.error("Error resetting wroteToday for users:", error);
   }
 }
 
-function scheduleStartAgain() {
-  const startDate = new Date(startingTimestamp * 1000); // Convert to milliseconds
+function scheduleStartNewDayOnTheAnkyverse() {
+  const startDate = new Date(1711861200 * 1000); // Convert to milliseconds
   const hour = startDate.getUTCHours();
   const minute = startDate.getUTCMinutes();
   const second = startDate.getUTCSeconds();
@@ -62,24 +60,20 @@ function scheduleStartAgain() {
   console.log("scheduling the start again", cronTime);
   cron.schedule(cronTime, () => {
     console.log("startAgain function is triggered");
-    startAgain();
+    startNewDayOnTheAnkyverse();
   });
 
   console.log(`Scheduled to run every day at ${hour}:${minute}:${second} UTC`);
 }
-// startAgain();
-scheduleStartAgain();
+scheduleStartNewDayOnTheAnkyverse();
 
 function delay(duration) {
   return new Promise((resolve) => setTimeout(resolve, duration));
 }
 
-async function getMentorOwners() {
+async function updateMentorOwners() {
   const ankyverseDay = getAnkyverseDay(new Date());
-  console.log(
-    "inside the get mentor owners function, the ankyverse day is: ",
-    ankyverseDay
-  );
+
   const mentorOwners = [];
   let newOwners = "";
 
@@ -98,7 +92,7 @@ async function getMentorOwners() {
           where: { mentorIndex: tokenId },
           data: {
             owner: newOwner,
-            ankyverseDay: 6,
+            ankyverseDay: ankyverseDay.wink,
             changeCount: { increment: 1 },
           },
         });
@@ -117,9 +111,6 @@ async function getMentorOwners() {
   }
   console.log("all the new owners are: ", newOwners);
 }
-
-// getMentorOwners();
-// startAgain();
 
 // ******** CRON JOBS ***********
 
@@ -275,7 +266,7 @@ app.post("/start-session", checkIfValidUser, async (req, res) => {
         randomUUID: randomUUID,
         mentorIndex: ankyMentor.mentorIndex,
         walletAddress: userWallet,
-        ankyverseDay: 7,
+        ankyverseDay: ankyverseDay.wink,
       },
     });
 
@@ -460,12 +451,10 @@ app.post("/save-cid", checkIfValidUser, async (req, res) => {
     // Assume updateStreak now accepts Prisma client and is less critical
     const streakUpdate = await updateStreak(userPrivyId, prisma);
 
-    res
-      .status(200)
-      .json({
-        message: "The cid was added to the session",
-        result: { ...result, userUpdate, mentorUpdate, streakUpdate },
-      });
+    res.status(200).json({
+      message: "The cid was added to the session",
+      result: { ...result, userUpdate, mentorUpdate, streakUpdate },
+    });
   } catch (error) {
     console.error("There was an error saving the cid", error);
     res.status(500).send("There was an error saving the cid");
