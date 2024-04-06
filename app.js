@@ -404,6 +404,7 @@ app.post("/save-cid", checkIfValidUser, async (req, res) => {
   }
 
   try {
+    // First, perform critical updates in a transaction
     const result = await prisma.$transaction(async (prisma) => {
       const session = await prisma.writingSession.findUniqueOrThrow({
         where: { id: sessionId, userId: userPrivyId },
@@ -417,46 +418,54 @@ app.post("/save-cid", checkIfValidUser, async (req, res) => {
       });
 
       const newenAmount = 7025;
-      const [transaction, userUpdate, sessionUpdate, mentorUpdate] =
-        await Promise.all([
-          prisma.newenTransaction.create({
-            data: {
-              userId: userPrivyId,
-              amount: newenAmount,
-              type: "earned",
-              mentorIndex: ankyMentor.mentorIndex,
-            },
-          }),
-          prisma.user.update({
-            where: { privyId: userPrivyId },
-            data: {
-              newenBalance: { increment: newenAmount },
-              totalNewenEarned: { increment: newenAmount },
-              wroteToday: true,
-              todayCid: cid,
-            },
-          }),
-          prisma.writingSession.update({
-            where: { id: sessionId },
-            data: {
-              writingCID: cid,
-              status: "completed",
-              newenEarned: newenAmount,
-            },
-          }),
-          prisma.ankyMentors.update({
-            where: { id: ankyMentor.id },
-            data: { wroteToday: true },
-          }),
-          updateStreak(userPrivyId, prisma), // Assume updateStreak now accepts Prisma client
-        ]);
+      const [transaction, sessionUpdate] = await Promise.all([
+        prisma.newenTransaction.create({
+          data: {
+            userId: userPrivyId,
+            amount: newenAmount,
+            type: "earned",
+            mentorIndex: ankyMentor.mentorIndex,
+          },
+        }),
+        prisma.writingSession.update({
+          where: { id: sessionId },
+          data: {
+            writingCID: cid,
+            status: "completed",
+            newenEarned: newenAmount,
+          },
+        }),
+      ]);
 
-      return { transaction, userUpdate, sessionUpdate, mentorUpdate };
+      return { transaction, sessionUpdate };
     });
+
+    // Then, perform non-critical updates outside the transaction
+    const [userUpdate, mentorUpdate] = await Promise.all([
+      prisma.user.update({
+        where: { privyId: userPrivyId },
+        data: {
+          newenBalance: { increment: newenAmount },
+          totalNewenEarned: { increment: newenAmount },
+          wroteToday: true,
+          todayCid: cid,
+        },
+      }),
+      prisma.ankyMentors.update({
+        where: { id: ankyMentor.id },
+        data: { wroteToday: true },
+      }),
+    ]);
+
+    // Assume updateStreak now accepts Prisma client and is less critical
+    const streakUpdate = await updateStreak(userPrivyId, prisma);
 
     res
       .status(200)
-      .json({ message: "The cid was added to the session", result });
+      .json({
+        message: "The cid was added to the session",
+        result: { ...result, userUpdate, mentorUpdate, streakUpdate },
+      });
   } catch (error) {
     console.error("There was an error saving the cid", error);
     res.status(500).send("There was an error saving the cid");
