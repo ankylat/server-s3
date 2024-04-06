@@ -275,7 +275,7 @@ app.post("/start-session", checkIfValidUser, async (req, res) => {
         randomUUID: randomUUID,
         mentorIndex: ankyMentor.mentorIndex,
         walletAddress: userWallet,
-        ankyverseDay: 6,
+        ankyverseDay: 7,
       },
     });
 
@@ -402,52 +402,58 @@ app.post("/save-cid", checkIfValidUser, async (req, res) => {
   if (!cid) {
     return res.status(400).send("CID is required.");
   }
+
   try {
-    const result = prisma.$transaction(async (prisma) => {
-      const session = await prisma.writingSession.findUnique({
+    const result = await prisma.$transaction(async (prisma) => {
+      const session = await prisma.writingSession.findUniqueOrThrow({
         where: { id: sessionId, userId: userPrivyId },
       });
-      if (!session) {
-        throw new Error("Session not found");
-      }
-      const ankyMentor = await prisma.ankyMentors.findFirst({
+
+      const ankyMentor = await prisma.ankyMentors.findFirstOrThrow({
         where: { owner: userWallet },
         orderBy: {
           mentorIndex: "asc",
         },
       });
-      if (!ankyMentor) {
-        throw new Error("mentor not found");
-      }
+
       const newenAmount = 7025;
-      const transaction = await prisma.newenTransaction.create({
-        data: {
-          userId: userPrivyId,
-          amount: newenAmount,
-          type: "earned",
-          mentorIndex: ankyMentor.mentorIndex,
-        },
-      });
-      const userUpdate = await prisma.user.update({
-        where: { privyId: userPrivyId },
-        data: {
-          newenBalance: { increment: newenAmount },
-          totalNewenEarned: { increment: newenAmount },
-          wroteToday: true,
-          todayCid: cid,
-        },
-      });
-      const sessionUpdate = await prisma.writingSession.update({
-        where: { id: sessionId },
-        data: {
-          writingCID: cid,
-          status: "completed",
-          newenEarned: newenAmount,
-        },
-      });
-      return { transaction, userUpdate, sessionUpdate };
+      const [transaction, userUpdate, sessionUpdate, mentorUpdate] =
+        await Promise.all([
+          prisma.newenTransaction.create({
+            data: {
+              userId: userPrivyId,
+              amount: newenAmount,
+              type: "earned",
+              mentorIndex: ankyMentor.mentorIndex,
+            },
+          }),
+          prisma.user.update({
+            where: { privyId: userPrivyId },
+            data: {
+              newenBalance: { increment: newenAmount },
+              totalNewenEarned: { increment: newenAmount },
+              wroteToday: true,
+              todayCid: cid,
+            },
+          }),
+          prisma.writingSession.update({
+            where: { id: sessionId },
+            data: {
+              writingCID: cid,
+              status: "completed",
+              newenEarned: newenAmount,
+            },
+          }),
+          prisma.ankyMentors.update({
+            where: { id: ankyMentor.id },
+            data: { wroteToday: true },
+          }),
+          updateStreak(userPrivyId, prisma), // Assume updateStreak now accepts Prisma client
+        ]);
+
+      return { transaction, userUpdate, sessionUpdate, mentorUpdate };
     });
-    await updateStreak(userPrivyId);
+
     res
       .status(200)
       .json({ message: "The cid was added to the session", result });
