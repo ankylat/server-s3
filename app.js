@@ -8,6 +8,10 @@ const bodyParser = require("body-parser");
 const { ethers } = require("ethers");
 const moment = require("moment");
 const { getAnkyverseDay } = require("./lib/ankyverse");
+const {
+  fetchWritingsForWink,
+  calculateStatsForResonanceWave,
+} = require("./lib/processAnswers");
 const mentorsAbi = require("./lib/mentorsAbi.json");
 
 const provider = new ethers.JsonRpcProvider(process.env.ALCHEMY_RPC_URL);
@@ -65,6 +69,7 @@ function scheduleStartNewDayOnTheAnkyverse() {
 
   console.log(`Scheduled to run every day at ${hour}:${minute}:${second} UTC`);
 }
+
 scheduleStartNewDayOnTheAnkyverse();
 
 function delay(duration) {
@@ -156,6 +161,46 @@ const checkIfValidUser = async (req, res, next) => {
 app.get("/", (req, res) => {
   res.send("hello world");
 });
+
+app.get("/get-writings-by-wink/:winkNumber", async (req, res) => {
+  const apiKey = req.headers["x-api-key"]; // typically API keys are sent in headers
+  const expectedApiKey = process.env.BRUNO_API_KEY; // This should be the actual value of your API key
+
+  if (!apiKey || apiKey !== expectedApiKey) {
+    // If the API key is not present or doesn't match, return an unauthorized error
+    return res.status(401).json({ error: "Unauthorized access" });
+  }
+  try {
+    const wink = req.params.winkNumber;
+    const writingsForThisWink = await fetchWritingsForWink(wink);
+    res.status(200).json({
+      wink: wink,
+      sojourn: 3,
+      writingsForThisWink: writingsForThisWink,
+    });
+  } catch (error) {
+    console.log("there was an error", error);
+    res.status(500).json({ writingsOfProvidedWink: null });
+  }
+});
+
+app.get(
+  "/get-stats-for-resonance-wave/:resonanceWaveNumber",
+  async (req, res) => {
+    try {
+      const resonanceWaveNumber = req.params.resonanceWaveNumber;
+      const statsForThisResonanceWave = await calculateStatsForResonanceWave(
+        resonanceWaveNumber
+      );
+      res.status(200).json({
+        statsForThisResonanceWave: statsForThisResonanceWave,
+      });
+    } catch (error) {
+      console.log("there was an error", error);
+      res.status(500).json({ writingsOfProvidedWink: null });
+    }
+  }
+);
 
 app.post("/user/:privyId", checkIfValidUser, async (req, res) => {
   try {
