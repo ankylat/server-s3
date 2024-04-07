@@ -393,7 +393,7 @@ app.post("/save-cid", checkIfValidUser, async (req, res) => {
   if (!cid) {
     return res.status(400).send("CID is required.");
   }
-
+  const newenAmount = 7025;
   try {
     // First, perform critical updates in a transaction
     const result = await prisma.$transaction(async (prisma) => {
@@ -408,7 +408,6 @@ app.post("/save-cid", checkIfValidUser, async (req, res) => {
         },
       });
 
-      const newenAmount = 7025;
       const [transaction, sessionUpdate] = await Promise.all([
         prisma.newenTransaction.create({
           data: {
