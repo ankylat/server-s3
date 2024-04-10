@@ -439,18 +439,17 @@ app.post("/save-cid", checkIfValidUser, async (req, res) => {
     return res.status(400).send("CID is required.");
   }
   const newenAmount = 7025;
+  const ankyMentor = await prisma.ankyMentors.findFirst({
+    where: { owner: userWallet },
+    orderBy: {
+      mentorIndex: "asc",
+    },
+  });
   try {
     // First, perform critical updates in a transaction
     const result = await prisma.$transaction(async (prisma) => {
       const session = await prisma.writingSession.findUniqueOrThrow({
         where: { id: sessionId, userId: userPrivyId },
-      });
-
-      const ankyMentor = await prisma.ankyMentors.findFirstOrThrow({
-        where: { owner: userWallet },
-        orderBy: {
-          mentorIndex: "asc",
-        },
       });
 
       const [transaction, sessionUpdate] = await Promise.all([
