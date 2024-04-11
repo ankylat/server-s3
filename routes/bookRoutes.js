@@ -4,13 +4,13 @@ const express = require("express");
 const router = express.Router();
 
 router.get("/:wink", async (req, res) => {
-  const apiKey = req.headers["x-api-key"]; // typically API keys are sent in headers
-  const expectedApiKey = process.env.BRUNO_API_KEY; // This should be the actual value of your API key
+  // const apiKey = req.headers["x-api-key"]; // typically API keys are sent in headers
+  // const expectedApiKey = process.env.BRUNO_API_KEY; // This should be the actual value of your API key
 
-  if (!apiKey || apiKey !== expectedApiKey) {
-    // If the API key is not present or doesn't match, return an unauthorized error
-    return res.status(401).json({ error: "Unauthorized access" });
-  }
+  // if (!apiKey || apiKey !== expectedApiKey) {
+  //   // If the API key is not present or doesn't match, return an unauthorized error
+  //   return res.status(401).json({ error: "Unauthorized access" });
+  // }
 
   const wink = req.params.wink;
   try {
