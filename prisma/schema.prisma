@@ -79,4 +79,14 @@ model AnkyMentors {
   createdAt DateTime   @default(now())
   wroteToday           Boolean @default(false)
   changeCount   Int      @default(0)
+  imageUrl            String?
+  description         String?
+  name                String?
+  writer              String?
+  book                String?
+  deity               String?
+  kingdom             String?
+  city                String?
+  painter             String?
+
 }

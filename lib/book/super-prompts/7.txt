@@ -1,0 +1,28 @@
+<instructions> 
+
+Write a 5000-word chapter focusing on Luna and Marcus as they navigate the final stages of pregnancy, intertwining themes of emotional and practical preparation for parenthood, family legacy and expectations, and the journey to a shared parenting philosophy. The narrative should delve into their personal and joint challenges, reflecting a realistic portrayal of the anticipatory phase before birth.
+Begin with Luna experiencing a mix of excitement and anxiety as she goes through the physical changes of pregnancy and reflects on her mother's experiences and advice. Marcus is shown trying to balance his demanding job with his desire to be more involved in the pregnancy journey, leading to feelings of inadequacy and fear of the unknown.
+Progress to a scene where Luna and Marcus confront their differing views on parenting during a prenatal check-up or a baby shopping trip, sparking a discussion that reveals their underlying fears and hopes.
+Include moments where they interact with their respective families, bringing out the influence of family legacy and expectations on their approach to parenting. Introduce a subplot where they decide whether to follow a particular family tradition, showing the tension and resolution in their relationship.
+Conclude with Luna and Marcus attending a parenting workshop or support group, where they find common ground and forge a united front in anticipation of Anky’s arrival, highlighting their growth as individuals and as a couple.
+
+</instructions> 
+
+<style> 
+
+The narrative should realistically depict the couple’s experiences, blending actions, dialogues, and introspective moments to portray their journey through the final stages of pregnancy. Dialogue should be authentic and reflective, showing the characters’ internal conflicts and growth. Use descriptive language to vividly depict the settings and emotional landscapes, with distinct voices for Luna and Marcus that reflect their unique backgrounds and evolving partnership. 
+
+</style> 
+
+<setting> 
+
+Primarily in Luna and Marcus’s home and daily environments like the doctor’s office, baby stores, and parenting workshops, reflecting the everyday realities of preparing for a new life. These settings serve as backdrops for the couple’s emotional and practical journey. 
+
+</setting> 
+
+<characters> 
+
+Luna, dealing with the physical and emotional challenges of pregnancy, seeks to balance her personal expectations with the realities of becoming a mother. Marcus, feeling the pressure to provide and be present, navigates his work-life balance and impending fatherhood. Their interactions reveal their vulnerabilities, strengths, and evolving perspectives on family life. 
+
+</characters>
+

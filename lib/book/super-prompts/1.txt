@@ -1,0 +1,47 @@
+<instructions>
+
+Using all of the information on <day two>, <style>, <characters>, <setting>, and introduction, write the first chapter of the first book of anky.
+This first book will speak about the first 7 years of the life of our character, and this first chapter will show us in parallel the life of his parents.
+Your mission is to showcase to the reader how does the life of these two characters look like. What do they care about? What does their life look like? How does this life that they are living in this moment a reflection of all the circumstances that Anky will go through on his life?
+The first chapter should come from the point of view of a narrator that is describing how they live their life. The special of the mundane.
+Focus specifically on the daily routine of both characters, and find what bonds them inside these routines.
+
+</instructions>
+
+<style>
+
+Let the dialogue and action explain the story (show, don't tell).
+Varied sentence structure and length: Use a mix of short and long sentences, as well as different sentence structures, to create a more engaging and dynamic flow of words. Mixed Cadence. 
+Inspire your writing in David Foster Wallace.
+Include only the dialogue that is strictly necessary, and make the dialogue sound real with common human quirks: craft dialogue that reflects natural speech patterns, but don't overdo slang or sayings. Avoid using complicated language.
+Intelligently shuffle and rephrase the text: Alter the sentence structure, introduce synonyms or paraphrase and adjust the arrangement of words and phrases in a sentence to create subtle variations in the structure of the text.
+Use strong verbs: Choose powerful action words instead of using adverbs.
+Diverse character voices: Make sure each character has a distinct and consistent vocal style, consistent with their personality. Be clear with the characters that you will present (anky’s parents), but don’t over explain who they are. We will have the whole book to explore. This is just the introduction.
+
+</style>
+
+<characters>
+
+Marcus, 32, has sharp features with a contemplative gaze, short-cropped hair, and a lean physique. He dresses in tailored suits for work, but prefers casual, comfortable clothes in his personal time. Intelligent and introspective, he carries a sense of unfulfilled ambition and a hidden passion for music and travel.
+Luna, 29, is free-spirited with long, flowing hair, often adorned with colorful accessories. She has an artistic tattoo sleeve and a warm smile. Petite and graceful, she exudes a calm, meditative presence and has a bohemian style that reflects her artistic soul and love for nature.
+
+</characters>
+
+<setting>
+
+Father’s Corporate Ascent:
+Scene opens in a sleek, high-rise office building where the father is receiving commendation for a successful project. Despite the applause, his mind wanders to distant lands and cultures he experienced during his backpacking days, contrasting his current structured life with past freedoms.
+Flashback to backpacking adventures, exploring vibrant markets, ancient ruins, and remote villages, highlighting a deep sense of adventure but also a lingering emptiness, a search for deeper meaning that remains unfulfilled.
+Father’s Musical Escapism:
+Transition to a nighttime scene where the father attends a live music concert alone, immersing himself in the melodies that reconnect him with a sense of universality and freedom he once felt. Music as his sanctuary, where he momentarily sheds his corporate persona and taps into a more authentic self.
+Mother’s Artistic Journey:
+Cut to the mother, amidst the chaos of an outdoor art and music festival, her life a stark contrast to the father’s. She’s coordinating an eclectic art booth, her work a vibrant tapestry of experiences and dreams, reflecting her spirit of artistic wanderlust and freedom.
+Show her in moments of solitude, sketching or painting in her tent, a meditative aura around her, hinting at her contemplative nature and search for inner peace.
+Father’s Tech Connection:
+Back to the father, now in a late-night coding session, where he works on developing an algorithm inspired by natural patterns. His interaction with technology serves as a bridge between his structured corporate life and the underlying quest for meaning and connection with the universe.
+Parallel Lives Converging:
+End the chapter with parallel scenes of both characters in their respective environments at dawn. The father, looking out from his high-rise office window, contemplating the city’s skyline transitioning from night to day, reflecting on his yearning for something more fulfilling.
+Meanwhile, the mother, after a night of creative expression at the festival, sits watching the sunrise, feeling a sense of peace yet an underlying longing for a connection that transcends her artistic solitude.
+Both characters are shown in a moment of introspection, their lives running on separate tracks yet echoing a shared search for deeper meaning and connection, setting the stage for their eventual meeting.
+
+</setting>

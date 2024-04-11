@@ -14,6 +14,8 @@ const {
 } = require("./lib/processAnswers");
 const mentorsAbi = require("./lib/mentorsAbi.json");
 
+const bookRoutes = require("./routes/bookRoutes");
+
 const provider = new ethers.JsonRpcProvider(process.env.ALCHEMY_RPC_URL);
 
 const contractAddress = "0x6d622549842Bc73A8F2bE146A27F026B646Bf6a1";
@@ -35,10 +37,11 @@ app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 const port = 3000;
 
+app.use("/book-data", bookRoutes);
+
 const minimumWritingTime = 7;
 
 async function startNewDayOnTheAnkyverse() {
-  console.log("inside the startNewDayOnTheAnkyverse function");
   try {
     await prisma.user.updateMany({
       data: {

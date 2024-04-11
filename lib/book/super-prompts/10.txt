@@ -1,0 +1,40 @@
+<instructions>
+Craft a 5000-word chapter from Marcus's first-person perspective, as he navigates through the moment of birth of her daughter: Anky. 
+
+Delve deep into the transformative power of the third chakra, symbolizing his journey towards fatherhood and personal growth. The chapter should interweave the themes of power, will, and identity, drawing inspiration from the energy of the first breath and the essence of day 11's reflections.
+
+Be poetic on the language you use, but don't over emphasize on the spiritual aspect of what is happening. Remember that Marcus is the kind of person that tends to be more rational, and has trouble connecting with his emotions.
+
+Marcus should reflect on his life's path, how the vitality of his first breath fueled his ambitions, and led to moments of strength and clarity. Highlight his internal struggle to balance career pressures with the impending responsibilities of fatherhood, resonating with the themes of the third chakra: self-esteem, confidence, and transformation.
+
+The narrative should explore Marcus's reflections on his relationship with Luna, their shared journey towards parenthood, and how this transformative phase rekindles his sense of purpose and personal power. Incorporate elements of the third chakra such as fire imagery, the color yellow, and symbols of transformation and energy.
+
+Include introspective moments where Marcus connects with the primal life force that has driven him, recalling significant moments where this energy was most palpable. Describe how these reflections lead to a profound internal shift, aligning him with his core identity and strength as he prepares to welcome his child.
+
+The climax should be a powerful scene where Marcus, at Luna's side during the birth, experiences a culmination of his transformative journey. This moment of birth should act as a catalyst, fully activating his third chakra, where he embodies the power, confidence, and proactive energy that he has been nurturing throughout the narrative.
+
+Conclude with Marcus holding his newborn, feeling a surge of energy and connection to the cycle of life, symbolizing the potent life force of the first breath that has shaped his journey and will continue to influence his path as a father.
+</instructions>
+
+<style>
+The narrative should be deeply introspective and evocative, capturing the intense, fiery energy of the third chakra. Use rich, vivid imagery and metaphors related to fire, light, and power to convey Marcus's internal transformation. The language should be powerful and assertive, reflecting Marcus's journey towards embracing his strength and willpower.
+
+The tone should be intimate and raw, providing a window into Marcus's soul as he navigates the complexities of self-identity and change. The storytelling should be fluid, moving between past reflections and present experiences, illustrating the continuous impact of the initial surge of life energy on his path.
+</style>
+
+<setting>
+
+The setting should oscillate between Marcus's internal landscape—his thoughts, memories, and reflections—and the tangible world around him, especially as he supports Luna in the birthing process. Visual elements like the golden hues of sunrise, the fiery glow of embers, and the dynamic, ever-changing flames should be used to mirror his internal transformation. The birthing room should be depicted as a crucible of transformation, where the raw, primal forces of life are palpable.
+
+</setting>
+<characters>
+
+Marcus: Portrayed as a complex, evolving character grappling with the convergence of his past experiences and future responsibilities. His character should embody the qualities of the third chakra, such as determination, strength, and the quest for personal power, while also revealing vulnerabilities and moments of introspection. He has trouble connecting with his emotions, and lives a logical life, working a regular job on a white collar company.
+
+Luna: Though the chapter focuses on Marcus, Luna's presence is vital as a catalyst for his transformation. She represents the grounding and nurturing force that complements and challenges Marcus's fiery energy.
+
+Maria: Luna's birth doula, who is in charge of holding space and navigating this process with her. 
+
+Their unborn child, Anky: The unseen but central force driving Marcus's evolution, symbolizing the future and the continuity of life's energy cycle, sparking the transformative journey Marcus undergoes.
+
+</characters>
