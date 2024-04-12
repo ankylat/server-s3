@@ -4,6 +4,8 @@ const express = require("express");
 const prisma = require("./lib/prismaClient");
 const { PrivyClient } = require("@privy-io/server-auth");
 const cron = require("node-cron");
+const fs = require("fs").promises;
+const path = require("path");
 const bodyParser = require("body-parser");
 const { ethers } = require("ethers");
 const moment = require("moment");
@@ -11,6 +13,7 @@ const { getAnkyverseDay } = require("./lib/ankyverse");
 const {
   fetchWritingsForWink,
   calculateStatsForResonanceWave,
+  fetchAllWritingsByWink,
 } = require("./lib/processAnswers");
 const mentorsAbi = require("./lib/mentorsAbi.json");
 
@@ -50,6 +53,7 @@ async function startNewDayOnTheAnkyverse() {
       },
     });
     updateMentorOwners();
+    downloadWritingsOfDayThatJustFinished();
     console.log("Successfully reset wroteToday for all users");
   } catch (error) {
     console.error("Error resetting wroteToday for users:", error);
@@ -118,6 +122,42 @@ async function updateMentorOwners() {
     }
   }
   console.log("all the new owners are: ", newOwners);
+}
+
+async function downloadWritingsOfDayThatJustFinished() {
+  try {
+    const currentDate = new Date();
+    currentDate.setHours(currentDate.getHours() - 5);
+    const wink = getAnkyverseDay(currentDate);
+    const writingsForDayThatIsEnding = await fetchAllWritingsByWink(wink);
+
+    console.log(
+      "These are the writings for the day that is ending:",
+      writingsForDayThatIsEnding
+    );
+
+    // Check if the writings content is not empty
+    if (
+      !writingsForDayThatIsEnding ||
+      writingsForDayThatIsEnding.length === 0
+    ) {
+      console.error(
+        "No writings retrieved or content is empty for wink:",
+        wink
+      );
+      return null; // Optionally, handle this case as needed
+    }
+
+    const bookDir = path.join(__dirname, `./lib/book/daily-writings`);
+    await fs.mkdir(bookDir, { recursive: true });
+    const filePath = path.join(bookDir, `${wink}.txt`);
+
+    await fs.writeFile(filePath, writingsForDayThatIsEnding, "utf8");
+    console.log("File written successfully to", filePath);
+  } catch (error) {
+    console.error("There was an error fetching this day's writings", error);
+    return null;
+  }
 }
 
 // ******** CRON JOBS ***********
