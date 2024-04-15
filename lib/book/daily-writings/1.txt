@@ -1,90 +1,70 @@
-<how do i make sense of the big bang?
-
-by closing my eyes, and exploring it with my awareness.
-
-i believe the big bang is inside of me.
-
-it keeps happening. throughout my experience.
-
-it keeps being.
-
-it keeps allowing me to live.
-
-it opens up the window.
-
-for me to be free.>
-
-<how can I make sense of an event like this? How can I process it?
-
-The Big Bang is the beginning. The manifestation. The exploration.
-
-The invitation. The allegorical invitation that life brings. For us to explore. Life just wants us to explore.
-
-To invite.
-
-To experience joy,>
-
-<I was first 13 maybe - maybe when I saw the ocean first. I cried. I said it looked like Cuba even though I'd only every seen it in co>
-
-<Im here to start writing about the big bang, and im gonna talk about the big bang that is happening now ... because it is happening. this is a big bang ... i am deeply grateful that Anky is live and that i am writing through that i cant explain how much of a big bang this is ... we are here>
-
-<Ok here we go. The big bang ... is now .... it is this beginning of universes and words. Of a book written by the collective unconscious. I am here writing a part of the big bang. We are here writing a piece of the big bang. I cal it Anky. Its beautiful. Universes collide a>
-
-<Big bang, si, el primer verbo el OM, el sonido primordial, de dónde nacen todas las cosas. Según los australianos el dia de la creación. No se si habrá sido tal cómo lo describe la ciencia>
-
-<Para mi el big bang tiene que ver con el inicio de la vida, la explosión de luz que se produce cuando un ovulo se fecunda y comienza la vida. Así como el universo se creo a través de una explosión de luz, somos parte dls universo, somos vida, somos luz. Solo falta explota>
-
-<Tatsachlich habe ich keine Vorstellung davon wie alles begann und wie alles enden wird . Ich glaube es war schon immer etwas vorhanden im multiversum und es wird auch >
-
-<once again, i'm here writing.
-
-once again. i'm trying to make sense of this event.
-
-of the event of the big bang. of the event of life, happening through us.
-
-here.
-
-now.
-
-the event of the big bang is happening, and it is a consequence of the exploration that is brought as an invitation that gives birth to life.
-
-that gives birth to what is here, to what is alive. to what is manifested.
-
-to what is invited.
-
-to what is brought.
-
-and to what goes.
-
-here we are.
-
-here we are.
-
-big b>
-
-<It's impossible to make sense of an event that happened billions of years (or more) in the past. We can explain it logically, or semi-logically through science, a string of mathematical equations. But to understand, >
-
-<El big bang fue cuando se creo el universo. Fue un evento magnficio que ninguno de nosotros vio al menso en este tiempo o espacio. la vida continuo después y nos enconramos muchos millones de años desùes ad portas de u>
-
-<it wasn't a big bang at all, rather a small zip that crated space time from something that must have existed before. So really, t>
-
-<The big bang is the beginning of time, when the first creation took place. A big explosion of particles, a mess and mixture of  >
-
-<I was deeply connected with the sunset today at the skatepark. So much I stopped for a moment and contemplated all my surrounding. I was going to my car and felt I needed to stay there and enjoy all of it. D>
-
-<A moment when I felt a deep emotional connection to my environment was when I was a child playing in the rain, this was something that I didn't get to do very often. I often appreciated the relief that it provided, which could be felt deeply and throughout my entire body. >
-
-<i was in the yukon upon the clay cliffs. don't remember crocuses that day but it was sunny enough to walk down hill among the trees. i was not on any schychadelics but i felt lke my body was a bubble moving through space. the sun gave something. the sun guided. but no real significance to the >
-
-<Life is a rollercoas>
-
-<Deep emotional connection with the environment happens almost all the time, intentionally or not. we as human, are what we are due to the environment and our skills to learn from there, feel then I EXI>
-
-<Massive, no word for it really>
-
-<No tiene ningún sentido para mi,, que de la nada haya si>
-
-<The sudden expansion after the universe crashes in on itself.>
-
-<The big bang was the prompt that started the universe. 
->
+[
+  'how do i make sense of the big bang?\n' +
+    '\n' +
+    'by closing my eyes, and exploring it with my awareness.\n' +
+    '\n' +
+    'i believe the big bang is inside of me.\n' +
+    '\n' +
+    'it keeps happening. throughout my experience.\n' +
+    '\n' +
+    'it keeps being.\n' +
+    '\n' +
+    'it keeps allowing me to live.\n' +
+    '\n' +
+    'it opens up the window.\n' +
+    '\n' +
+    'for me to be free.',
+  'how can I make sense of an event like this? How can I process it?\n' +
+    '\n' +
+    'The Big Bang is the beginning. The manifestation. The exploration.\n' +
+    '\n' +
+    'The invitation. The allegorical invitation that life brings. For us to explore. Life just wants us to explore.\n' +
+    '\n' +
+    'To invite.\n' +
+    '\n' +
+    'To experience joy,',
+  "I was first 13 maybe - maybe when I saw the ocean first. I cried. I said it looked like Cuba even though I'd only every seen it in co",
+  'Im here to start writing about the big bang, and im gonna talk about the big bang that is happening now ... because it is happening. this is a big bang ... i am deeply grateful that Anky is live and that i am writing through that i cant explain how much of a big bang this is ... we are here',
+  'Ok here we go. The big bang ... is now .... it is this beginning of universes and words. Of a book written by the collective unconscious. I am here writing a part of the big bang. We are here writing a piece of the big bang. I cal it Anky. Its beautiful. Universes collide a',
+  'Big bang, si, el primer verbo el OM, el sonido primordial, de dónde nacen todas las cosas. Según los australianos el dia de la creación. No se si habrá sido tal cómo lo describe la ciencia',
+  'Para mi el big bang tiene que ver con el inicio de la vida, la explosión de luz que se produce cuando un ovulo se fecunda y comienza la vida. Así como el universo se creo a través de una explosión de luz, somos parte dls universo, somos vida, somos luz. Solo falta explota',
+  'Tatsachlich habe ich keine Vorstellung davon wie alles begann und wie alles enden wird . Ich glaube es war schon immer etwas vorhanden im multiversum und es wird auch ',
+  "once again, i'm here writing.\n" +
+    '\n' +
+    "once again. i'm trying to make sense of this event.\n" +
+    '\n' +
+    'of the event of the big bang. of the event of life, happening through us.\n' +
+    '\n' +
+    'here.\n' +
+    '\n' +
+    'now.\n' +
+    '\n' +
+    'the event of the big bang is happening, and it is a consequence of the exploration that is brought as an invitation that gives birth to life.\n' +
+    '\n' +
+    'that gives birth to what is here, to what is alive. to what is manifested.\n' +
+    '\n' +
+    'to what is invited.\n' +
+    '\n' +
+    'to what is brought.\n' +
+    '\n' +
+    'and to what goes.\n' +
+    '\n' +
+    'here we are.\n' +
+    '\n' +
+    'here we are.\n' +
+    '\n' +
+    'big b',
+  "It's impossible to make sense of an event that happened billions of years (or more) in the past. We can explain it logically, or semi-logically through science, a string of mathematical equations. But to understand, ",
+  'El big bang fue cuando se creo el universo. Fue un evento magnficio que ninguno de nosotros vio al menso en este tiempo o espacio. la vida continuo después y nos enconramos muchos millones de años desùes ad portas de u',
+  "it wasn't a big bang at all, rather a small zip that crated space time from something that must have existed before. So really, t",
+  'The big bang is the beginning of time, when the first creation took place. A big explosion of particles, a mess and mixture of  ',
+  'I was deeply connected with the sunset today at the skatepark. So much I stopped for a moment and contemplated all my surrounding. I was going to my car and felt I needed to stay there and enjoy all of it. D',
+  "A moment when I felt a deep emotional connection to my environment was when I was a child playing in the rain, this was something that I didn't get to do very often. I often appreciated the relief that it provided, which could be felt deeply and throughout my entire body. ",
+  "i was in the yukon upon the clay cliffs. don't remember crocuses that day but it was sunny enough to walk down hill among the trees. i was not on any schychadelics but i felt lke my body was a bubble moving through space. the sun gave something. the sun guided. but no real significance to the ",
+  'Life is a rollercoas',
+  'Deep emotional connection with the environment happens almost all the time, intentionally or not. we as human, are what we are due to the environment and our skills to learn from there, feel then I EXI',
+  'Massive, no word for it really',
+  'No tiene ningún sentido para mi,, que de la nada haya si',
+  'The sudden expansion after the universe crashes in on itself.',
+  'The big bang was the prompt that started the universe. \n'
+]

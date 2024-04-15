@@ -2,6 +2,7 @@ const express = require("express");
 const fs = require("fs").promises;
 const path = require("path");
 const router = express.Router();
+const { fetchWritingsForWink } = require("../lib/processAnswers");
 
 router.get("/:wink", async (req, res) => {
   try {
@@ -39,9 +40,7 @@ router.get("/:wink", async (req, res) => {
       path.join(bookDir, `daily-prompts/es/${wink}.txt`)
     );
     const prompts = { en: promptEnglish, es: promptSpanish };
-    const userWritings = await safeReadFile(
-      path.join(bookDir, `daily-writings/${wink}.txt`)
-    );
+    const userWritings = await fetchWritingsForWink(wink);
     const userFeedbackForChapter = await safeReadFile(
       path.join(bookDir, `feedback-from-users/${wink - 1}.txt`)
     );
@@ -70,7 +69,7 @@ router.get("/:wink", async (req, res) => {
 
     res.status(200).json(dataToReturn);
   } catch (error) {
-    console.log("there was an error here");
+    console.log("there was an error here", error);
     res.status(500).json({ message: "There was an error" });
   }
 });
