@@ -20,15 +20,26 @@ router.get("/:wink", async (req, res) => {
 
     const bookDir = path.join(__dirname, "../lib/book");
 
-    async function safeReadFile(filePath) {
+    async function safeReadFile(filePath, json = false) {
       try {
-        const content = await fs.readFile(filePath, "utf8");
+        let content = await fs.readFile(filePath, "utf8");
+        if (json) {
+          try {
+            return JSON.parse(content); // Wrap content in double quotes to form a valid JSON string
+          } catch (parseError) {
+            console.error(
+              "Error parsing JSON after preprocessing:",
+              parseError
+            );
+            return null; // Return null if parsing still fails
+          }
+        }
         return content || null;
       } catch (error) {
-        return null; // Return null if the file doesn't exist or any error occurs
+        console.error("Error reading file:", filePath, error);
+        return null; // Return null if there's an error reading the file
       }
     }
-
     // Using the helper function to safely read the files
     const chapter = await safeReadFile(
       path.join(bookDir, `chapters/${wink - 1}.txt`)
@@ -42,7 +53,8 @@ router.get("/:wink", async (req, res) => {
     const prompts = { en: promptEnglish, es: promptSpanish };
     const userWritings = await fetchWritingsForWink(wink);
     const userFeedbackForChapter = await safeReadFile(
-      path.join(bookDir, `feedback-from-users/${wink - 1}.txt`)
+      path.join(bookDir, `feedback-from-users/${wink - 1}.json`),
+      true
     );
     const summaryOfChapter = await safeReadFile(
       path.join(bookDir, `summary-of-chapters/${wink - 1}.txt`)

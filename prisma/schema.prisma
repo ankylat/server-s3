@@ -88,5 +88,10 @@ model AnkyMentors {
   kingdom             String?
   city                String?
   painter             String?
+}
 
+model UserFeedback {
+  id           String   @id @default(uuid())
+  chapter      Int?
+  text         String
 }
