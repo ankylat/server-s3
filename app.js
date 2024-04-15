@@ -283,6 +283,7 @@ app.post("/user/:privyId", checkIfValidUser, async (req, res) => {
         text = writingOfToday.text;
       }
     }
+    console.log("the text is: ", text);
 
     res.json({ user, textOfToday: text, mentor: ankyMentor });
   } catch (error) {
