@@ -1,6 +1,7 @@
 require("dotenv").config();
 const cors = require("cors");
 const express = require("express");
+const jose = require("jose");
 const prisma = require("./lib/prismaClient");
 const { PrivyClient } = require("@privy-io/server-auth");
 const cron = require("node-cron");
@@ -187,16 +188,34 @@ cron.schedule("*/30 * * * *", async () => {
   }
 });
 
+console.log("the privy app key is: ", process.env.PRIVY_APP_KEY);
 // ********* MIDDLEWARE ***********
 
 const checkIfValidUser = async (req, res, next) => {
   try {
-    const authToken = req?.headers?.authorization?.replace("Bearer ", "");
-    const verifiedClaims = await privy.verifyAuthToken(authToken);
+    const authToken = req.headers.authorization.replace("Bearer ", "");
+    const algorithm = "ES256";
+    const spki = process.env.PRIVY_APP_KEY;
+
+    const verificationKey = await jose.importSPKI(spki, algorithm);
+
+    try {
+      const payload = await jose.jwtVerify(authToken, verificationKey, {
+        issuer: "privy.io",
+        audience: process.env.PRIVY_APP_ID,
+      });
+      const privyDID = payload.sub;
+      if (!privyDID == req.body.userDiD) {
+        throw new Error("Not authorized");
+      }
+    } catch (error) {
+      console.log("the error is: ", error);
+    }
+
     next();
   } catch (error) {
-    console.error("Authorization failed", error);
-    res.status(401).json({ message: "Not authorized" });
+    console.log("The user is not authorized");
+    res.status(401).json({ message: "Not authorized" }); // Sending 401 for unauthorized requests
   }
 };
 
@@ -283,7 +302,6 @@ app.post("/user/:privyId", checkIfValidUser, async (req, res) => {
         text = writingOfToday.text;
       }
     }
-    console.log("the text is: ", text);
 
     res.json({ user, textOfToday: text, mentor: ankyMentor });
   } catch (error) {
