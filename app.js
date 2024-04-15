@@ -193,7 +193,6 @@ console.log("the privy app key is: ", process.env.PRIVY_APP_KEY);
 
 const checkIfValidUser = async (req, res, next) => {
   try {
-    console.log("the req.headers is: ", req.headers);
     const authToken = req?.headers?.authorization?.replace("Bearer ", "");
     const algorithm = "ES256";
     const spki = process.env.PRIVY_APP_KEY;
