@@ -12,6 +12,7 @@ const moment = require("moment");
 const { getAnkyverseDay } = require("./lib/ankyverse");
 const {
   fetchWritingsForWink,
+  fetchContentFromIrys,
   calculateStatsForResonanceWave,
   fetchAllWritingsByWink,
 } = require("./lib/processAnswers");
@@ -265,8 +266,25 @@ app.post("/user/:privyId", checkIfValidUser, async (req, res) => {
         walletAddress: walletAddress,
       },
     });
+    let writingOfToday, text;
+    if (user) {
+      const currentDate = new Date();
+      const wink = getAnkyverseDay(currentDate);
 
-    res.json({ user, mentor: ankyMentor });
+      writingOfToday = await prisma.writingSession.findMany({
+        where: {
+          userId: user.privyId,
+          ankyverseDay: wink,
+        },
+      });
+      if (writingOfToday.writingCID) {
+        text = await fetchContentFromIrys(writingOfToday.writingCID);
+      } else {
+        text = writingOfToday.text;
+      }
+    }
+
+    res.json({ user, textOfToday: text, mentor: ankyMentor });
   } catch (error) {
     console.log("there was an error", error);
   }
