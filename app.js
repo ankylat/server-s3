@@ -288,10 +288,8 @@ app.post("/user/:privyId", checkIfValidUser, async (req, res) => {
     });
     let writingsOfToday, thisWriting, text;
     if (user) {
-      console.log("THERE IS USER");
       const currentDate = new Date();
       const wink = getAnkyverseDay(currentDate).wink;
-      console.log("the wink is: ", wink);
       writingsOfToday = await prisma.writingSession.findMany({
         where: {
           userId: user.privyId,
@@ -300,14 +298,12 @@ app.post("/user/:privyId", checkIfValidUser, async (req, res) => {
         },
       });
       thisWriting = writingsOfToday[0];
-      console.log("the writing of today is: ", thisWriting);
       if (thisWriting.writingCID) {
         text = await fetchContentFromIrys(thisWriting.writingCID);
       } else {
         text = thisWriting.text;
       }
       thisWriting.text = text;
-      console.log("THE TEXT SI: ", text);
     }
 
     res.json({ user, writingOfToday: thisWriting, mentor: ankyMentor });
