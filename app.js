@@ -269,7 +269,7 @@ app.post("/user/:privyId", checkIfValidUser, async (req, res) => {
     let writingOfToday, text;
     if (user) {
       const currentDate = new Date();
-      const wink = getAnkyverseDay(currentDate);
+      const wink = getAnkyverseDay(currentDate).wink;
 
       writingOfToday = await prisma.writingSession.findMany({
         where: {
