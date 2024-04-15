@@ -193,7 +193,8 @@ console.log("the privy app key is: ", process.env.PRIVY_APP_KEY);
 
 const checkIfValidUser = async (req, res, next) => {
   try {
-    const authToken = req.headers.authorization.replace("Bearer ", "");
+    console.log("the req.headers is: ", req.headers);
+    const authToken = req?.headers?.authorization?.replace("Bearer ", "");
     const algorithm = "ES256";
     const spki = process.env.PRIVY_APP_KEY;
 
@@ -214,7 +215,7 @@ const checkIfValidUser = async (req, res, next) => {
 
     next();
   } catch (error) {
-    console.log("The user is not authorized");
+    console.log("The user is not authorized", error);
     res.status(401).json({ message: "Not authorized" }); // Sending 401 for unauthorized requests
   }
 };
@@ -285,31 +286,37 @@ app.post("/user/:privyId", checkIfValidUser, async (req, res) => {
         walletAddress: walletAddress,
       },
     });
-    let writingOfToday, text;
+    let writingsOfToday, thisWriting, text;
     if (user) {
+      console.log("THERE IS USER");
       const currentDate = new Date();
       const wink = getAnkyverseDay(currentDate).wink;
-
-      writingOfToday = await prisma.writingSession.findMany({
+      console.log("the wink is: ", wink);
+      writingsOfToday = await prisma.writingSession.findMany({
         where: {
           userId: user.privyId,
           ankyverseDay: wink,
+          status: "completed",
         },
       });
-      if (writingOfToday.writingCID) {
-        text = await fetchContentFromIrys(writingOfToday.writingCID);
+      thisWriting = writingsOfToday[0];
+      console.log("the writing of today is: ", thisWriting);
+      if (thisWriting.writingCID) {
+        text = await fetchContentFromIrys(thisWriting.writingCID);
       } else {
-        text = writingOfToday.text;
+        text = thisWriting.text;
       }
+      thisWriting.text = text;
+      console.log("THE TEXT SI: ", text);
     }
 
-    res.json({ user, textOfToday: text, mentor: ankyMentor });
+    res.json({ user, writingOfToday: thisWriting, mentor: ankyMentor });
   } catch (error) {
     console.log("there was an error", error);
   }
 });
 
-app.post("/check-user", checkIfValidUser, async (req, res) => {
+app.post("/check-user", async (req, res) => {
   try {
     const { privyId } = req.body;
 
