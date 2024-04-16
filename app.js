@@ -296,7 +296,7 @@ app.post("/user/:privyId", checkIfValidUser, async (req, res) => {
           status: "completed",
         },
       });
-      if (writingsOfToday.length > 0) {
+      if (writingsOfToday?.length > 0) {
         thisWriting = writingsOfToday[0];
         if (thisWriting?.writingCID) {
           text = await fetchContentFromIrys(thisWriting?.writingCID);
