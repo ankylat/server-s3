@@ -296,13 +296,15 @@ app.post("/user/:privyId", checkIfValidUser, async (req, res) => {
           status: "completed",
         },
       });
-      thisWriting = writingsOfToday[0];
-      if (thisWriting.writingCID) {
-        text = await fetchContentFromIrys(thisWriting.writingCID);
-      } else {
-        text = thisWriting.text;
+      if (writingsOfToday.length > 0) {
+        thisWriting = writingsOfToday[0];
+        if (thisWriting?.writingCID) {
+          text = await fetchContentFromIrys(thisWriting?.writingCID);
+        } else {
+          text = thisWriting?.text;
+        }
+        thisWriting.text = text;
       }
-      thisWriting.text = text;
     }
 
     res.json({ user, writingOfToday: thisWriting, mentor: ankyMentor });
