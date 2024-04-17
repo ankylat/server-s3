@@ -188,11 +188,11 @@ cron.schedule("*/30 * * * *", async () => {
   }
 });
 
-console.log("the privy app key is: ", process.env.PRIVY_APP_KEY);
 // ********* MIDDLEWARE ***********
 
 const checkIfValidUser = async (req, res, next) => {
   try {
+    console.log("ALOJA", req.headers.authorization);
     const authToken = req?.headers?.authorization?.replace("Bearer ", "");
     const algorithm = "ES256";
     const spki = process.env.PRIVY_APP_KEY;
