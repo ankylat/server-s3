@@ -353,6 +353,7 @@ app.post("/check-user", async (req, res) => {
 
 app.post("/start-session", checkIfValidUser, async (req, res) => {
   try {
+    console.log("starting the session");
     const userPrivyId = req.body.userPrivyId;
     const now = req.body.timestamp;
     const randomUUID = req.body.randomUUID;
@@ -386,7 +387,7 @@ app.post("/start-session", checkIfValidUser, async (req, res) => {
         .json({ message: "this session is invalid, the user already wrote" });
     }
     const ankyverseDay = getAnkyverseDay(new Date());
-
+    console.log("right before creating the new session");
     const newSession = await prisma.writingSession.create({
       data: {
         userId: userPrivyId,
@@ -398,6 +399,7 @@ app.post("/start-session", checkIfValidUser, async (req, res) => {
         ankyverseDay: ankyverseDay.wink,
       },
     });
+    console.log("the new session is: ", newSession);
 
     res.status(201).json(newSession);
   } catch (error) {
