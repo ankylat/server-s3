@@ -192,7 +192,6 @@ cron.schedule("*/30 * * * *", async () => {
 
 const checkIfValidUser = async (req, res, next) => {
   try {
-    console.log("ALOJA", req.headers.authorization);
     const authToken = req?.headers?.authorization?.replace("Bearer ", "");
     const algorithm = "ES256";
     const spki = process.env.PRIVY_APP_KEY;
@@ -211,7 +210,6 @@ const checkIfValidUser = async (req, res, next) => {
     } catch (error) {
       console.log("the error is: ", error);
     }
-
     next();
   } catch (error) {
     console.log("The user is not authorized", error);
@@ -464,6 +462,7 @@ async function updateStreak(privyId) {
 
 app.post("/end-session", checkIfValidUser, async (req, res) => {
   try {
+    console.log("ending the session ", result);
     const finishTimestamp = req.body.timestamp;
     const userPrivyId = req.body.user;
     const frontendWrittenTime = req.body.frontendWrittenTime;
@@ -489,8 +488,9 @@ app.post("/end-session", checkIfValidUser, async (req, res) => {
     const delay = Math.abs(serverTimeUserWrote - frontendWrittenTime);
     const sessionDuration = Math.min(serverTimeUserWrote, frontendWrittenTime);
     const isValid = delay < 3000 && sessionDuration > minimumWritingTime;
+    let updatedSession;
     if (isValid) {
-      const updatedSession = await prisma.writingSession.update({
+      updatedSession = await prisma.writingSession.update({
         where: { id: activeSession.id },
         data: {
           endTime: new Date(),
@@ -499,9 +499,8 @@ app.post("/end-session", checkIfValidUser, async (req, res) => {
           sessionDuration: sessionDuration,
         },
       });
-      res.status(200).json(updatedSession);
     } else {
-      const updatedSession = await prisma.writingSession.update({
+      updatedSession = await prisma.writingSession.update({
         where: { id: activeSession.id },
         data: {
           endTime: new Date(),
@@ -511,8 +510,9 @@ app.post("/end-session", checkIfValidUser, async (req, res) => {
           sessionDuration: sessionDuration,
         },
       });
-      res.status(200).json(updatedSession);
     }
+    console.log("the session is over", updatedSession);
+    res.status(200).json(updatedSession);
   } catch (error) {
     console.error(error);
     res.status(500).send("An error occurred while ending the session.");
