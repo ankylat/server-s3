@@ -462,7 +462,6 @@ async function updateStreak(privyId) {
 
 app.post("/end-session", checkIfValidUser, async (req, res) => {
   try {
-    console.log("ending the session ", result);
     const finishTimestamp = req.body.timestamp;
     const userPrivyId = req.body.user;
     const frontendWrittenTime = req.body.frontendWrittenTime;
