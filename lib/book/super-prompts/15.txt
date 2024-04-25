@@ -30,7 +30,7 @@ Use vivid, poetic language to create a tapestry of life that connects the visibl
 
 </style>
 
-<character> 
+<characters> 
 
 Celestia: Present her as a wise, loving spirit with a profound connection to the cosmic forces and her earthly family. Her narration should convey a deep understanding of life’s cycles and the transcendental nature of love and guidance.
 
@@ -44,7 +44,7 @@ Marcus: Though not the main focus of the narrative, Marcus's presence is felt th
 
 Anky: The central figure of the chapter, a soul on the cusp of a profound transformation. As Anky prepares to leave the Ankyverse, her presence should be one of shimmering potential and innocent wonder. Let her interactions with the scribe and her surroundings reflect a sense of trust and openness, as she embraces the profound journey that awaits her.
 
-</character>
+</characters>
 
 <interweaving> 
 

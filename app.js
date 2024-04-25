@@ -19,7 +19,9 @@ const {
 } = require("./lib/processAnswers");
 const mentorsAbi = require("./lib/mentorsAbi.json");
 
-const bookRoutes = require("./routes/bookRoutes");
+const bookRoutes = require("./routes/book");
+const userRoutes = require("./routes/user");
+const audioRoutes = require("./routes/audio");
 
 const provider = new ethers.JsonRpcProvider(process.env.ALCHEMY_RPC_URL);
 
@@ -43,6 +45,8 @@ app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 const port = 3000;
 
 app.use("/book-data", bookRoutes);
+app.use("/user", userRoutes);
+app.use("/audio", audioRoutes);
 
 const minimumWritingTime = 7;
 
@@ -322,6 +326,7 @@ app.post("/check-user", async (req, res) => {
     let user = await prisma.user.findUnique({
       where: { privyId },
     });
+    console.log("the user is: ", user);
 
     if (!user) {
       // If not, create a new user
@@ -339,6 +344,7 @@ app.post("/check-user", async (req, res) => {
         },
       });
     }
+    // const userMentor = await prisma.ankyMentors.findUnique({});
 
     res.status(200).json(user);
   } catch (error) {
