@@ -137,11 +137,6 @@ async function downloadWritingsOfDayThatJustFinished() {
     const wink = getAnkyverseDay(currentDate);
     const writingsForDayThatIsEnding = await fetchAllWritingsByWink(wink);
 
-    console.log(
-      "These are the writings for the day that is ending:",
-      writingsForDayThatIsEnding
-    );
-
     // Check if the writings content is not empty
     if (
       !writingsForDayThatIsEnding ||
